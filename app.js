@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require("express");
 const port = process.env.PORT || 3000;
 require("./src/db/dbLocal_conn");
-// require("./db/server");
+// require("./src/db/clusterdb_server");  //Live server
 fs = require('fs');
 const studentRouter = require("./src/routes/student");
 const RegisterRouter = require("./src/routes/Register");

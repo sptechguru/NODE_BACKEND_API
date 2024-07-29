@@ -4,9 +4,8 @@ const username = "test123";
 const password = "pal123";
 const cluster = "cluster0.bjxrmbt";
 const dbname = "demodb";
-const url = `mongodb+srv://${username}:${password}@${cluster}.mongodb.net/${dbname}?retryWrites=true&w=majority`;
-const clusterUrl =
-  "mongodb+srv://test123:pal123@$cluster0.bjxrmbt.mongodb.net/demodb?retryWrites=true&w=majority";
+const base_Url = `mongodb+srv://${username}:${password}@${cluster}.mongodb.net/${dbname}?retryWrites=true&w=majority`;
+const clusterUrl ="mongodb+srv://test123:pal123@$cluster0.bjxrmbt.mongodb.net/demodb?retryWrites=true&w=majority";
 
 mongoose
   .connect(clusterUrl, {

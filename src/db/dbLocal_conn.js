@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const DataBase = process.env.DATABASE_KEY;
-// const DataBase = 'mongodb://localhost:27017/MERN_DB';
+// const DataBase = 'mongodb://localhost:27017/MERN_DB2';
 
 mongoose
   .connect(DataBase, {
