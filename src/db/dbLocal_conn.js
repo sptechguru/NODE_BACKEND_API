@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
 
-const DataBase = process.env.DATABASE_KEY;
-// const DataBase = 'mongodb://localhost:27017/MERN_DB2';
+// const DataBase = process.env.DATABASE_KEY;
+const DataBase = 'mongodb://localhost:27017/MERN_DB2';
 
 mongoose
   .connect(DataBase, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true,
+    ssl: false
   })
   .then(() => {
     console.log(`Good Job Your Data Base connection is Success. ${DataBase}`);

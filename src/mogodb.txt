@@ -2,6 +2,8 @@ Setup MogoDB
 mogodb => "C:\Program Files\MongoDB\Server\5.0\bin/mongod.exe" --version       
 mongoEXE => "C:\Program Files\MongoDB\Server\5.0\bin/mongo.exe" --version          
 
+const mernPort = 'mongodb+srv://santoshpal9816:sRvZfG8e21LKwFNN@cluster0.cnvo4ov.mongodb.net/mern-portfolio-db';
+
 
 ########## for terminal for powershell#######################################
  mongo "mongodb+srv://studentsdemo.y2jgxd7.mongodb.net/studentsapi" --username santosh123
