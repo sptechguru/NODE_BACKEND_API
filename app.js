@@ -32,9 +32,10 @@ app.use(function (req, res, next) {
 });
 
 const bodyParser = require("body-parser");
+
 const customer = require("./src/routes/customer_view");
-const csrfProtection = csrf()
-console.log("secrekKey", process.env.SECRET_KEY);
+const csrfProtection = csrf();
+// console.log("secrekKey", process.env.SECRET_KEY);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -42,13 +43,13 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.json());
 
-
 app.use("/user", UseRouter);
 app.use("/api/portfolio", portfolioRouter);
+
 app.use(RegisterRouter, studentRouter, customer, EmployeeRouter);
 
 app.listen(port, () => {
   console.log(
-    `Your Connection is Success And Port Number is: https://localhost:${port}`
+    `Your Connection is Success And Port Number is: http://localhost:${port}`
   );
 });

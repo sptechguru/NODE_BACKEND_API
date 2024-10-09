@@ -33,6 +33,10 @@ const upload = multer({
 
 // // now using profile pic uploads ///////////////////
 
+router.get("/", (req, res) => {
+  res.send("My Student get Route is Activated")
+});
+
 
 ///////////// All http  method for using is async wait ///////////////////
 

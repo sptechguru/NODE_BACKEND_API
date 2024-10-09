@@ -102,7 +102,7 @@ router.get("/all-details", async (req, res) => {
         res.status(500).send({
             success: false,
             message: "User details not Found ",
-            // data:user
+            data:[]
         });
     }
 });

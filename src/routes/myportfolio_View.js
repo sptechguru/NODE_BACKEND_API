@@ -4,8 +4,9 @@ const router = require("express").Router()
 const { Intro, About, Project, Education, Expereince, Skill } = require("../models/portFolio");
 /////////////////////////// get all Portfoliod Data//////////////////
 
-
-
+router.get("/", (req, res) => {
+  res.send("My Portfolio get Route is Activated")
+});
 
 router.get("/get-portfolio-data", async (req, res) => {
   console.log("required", req)
@@ -186,8 +187,6 @@ router.post("/delete-experience", async (req, res) => {
     res.status(500).send(error);
   }
 })
-
-
 
 
 module.exports = router;

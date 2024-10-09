@@ -1,104 +1,58 @@
-const { ApolloServer } = require("@apollo/server");
-const { startStandaloneServer } = require("@apollo/server/standalone");
-const port = 5000;
-const cors = require("cors");
+const express = require("express");
+const app = express();
 const bodyParser = require("body-parser");
-const { USER } = require("./src/Graph-Ql/User.js");
-const { TODOS } = require("./src/Graph-Ql/Todos.js");
+require("dotenv").config();
+const cutomerRouter = require("./src/routes/customer_view");
+const studentRouter = require("./src/routes/student");
+const portfolioRouter = require("./src/routes/myportfolio_View");
+const RegisterRouter = require("./src/routes/Register");
+const EmployeeRouter = require("./src/routes/employee_view");
+// const UseRouter = require("./src/Auth/user");
+// require("./src/db/dbLocal_conn");
+require("./src/db/clusterdb_server");
 
-const products = [
-  { id: "1", name: "Product A", description: "Description A", price: 19.99 },
-  { id: "2", name: "Product B", description: "Description B", price: 29.99 },
-  // Add more products here
-];
+app.use(bodyParser.json());
+const port = process.env.PORT || 5000;
 
-// Sample GraphQL schema
-const typeDefs = `
+const cors = require("cors");
+const csrf = require("csurf");
+app.use(cors("*"));
 
- type Product {
-    id: ID!
-    name: String!
-    description: String
-    price: Float!
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Methods", "*");
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, access_token"
+  );
+  if ("OPTIONS" == req.method) {
+    res.send(200);
+    res.sendStatus(200);
+  } else {
+    next();
   }
+});
 
-  type Query {
-    getAllProducts: [Product]
-    getProductById(id: ID!): Product
-    getProductsByName(name: String!): [Product]
+// implemention Swagger Api Documetion
+
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./swagger-output.json");
+app.use("/api/v1/", RegisterRouter, cutomerRouter, EmployeeRouter, studentRouter,portfolioRouter);
+// app.use("/user-auth", UseRouter);
+
+
+const options = {
+  // explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+  swaggerOptions: {
+    validatorUrl: null
   }
+}
 
-  type Mutation {
-    updateProduct(
-      id: ID!
-      name: String
-      description: String
-      price: Float
-    ): Product
-    deleteProduct(id: ID!): String
-    createProduct(name: String!, description: String, price: Float!): Product
-  }
+app.use("/swager-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
-  type Subscription {
-    productUpdated: Product
-  }
-`;
-
-// Sample resolver
-const resolvers = {
-  
-  Query: {
-    getAllProducts: () => products,
-    getProductById: (_, { id }) =>
-      products.find((product) => product.id === id),
-    getProductsByName: (_, { name }) =>
-      products.filter((product) => product.name.includes(name)),
-  },
-
-  Mutation: {
-    updateProduct: (_, { id, name, description, price }) => {
-      const productIndex = products.findIndex((product) => product.id === id);
-      if (productIndex === -1) {
-        throw new Error("Product not found");
-      }
-      products[productIndex] = {
-        ...products[productIndex],
-        name,
-        description,
-        price,
-      };
-      return products[productIndex];
-    },
-    deleteProduct: (_, { id }) => {
-      const productIndex = products.findIndex((product) => product.id === id);
-      if (productIndex === -1) {
-        throw new Error("Product not found");
-      }
-      products.splice(productIndex, 1);
-      return "Product deleted successfully";
-    },
-
-    createProduct: (_, { name, description, price }) => {
-      const newProduct = {
-        id: String(products.length + 1),
-        name,
-        description,
-        price,
-      };
-      products.push(newProduct);
-      return newProduct;
-    },
-  },
-};
-
-// Create Apollo Server instance
-const server = new ApolloServer({ typeDefs, resolvers });
-
-// Start the server
-startStandaloneServer(server, { listen: { port } })
-  .then(() => {
-    console.log("Server is Working fine Port No is: https://localhost:" + port);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+app.listen(port, () => {
+  console.log(
+    `Your Connection is Success And Port Number is: http://localhost:${port}`
+  );
+});

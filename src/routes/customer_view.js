@@ -1,18 +1,49 @@
-
 const express = require("express");
 const router = new express.Router();
 const Customer = require("../models/cutomer");
-const checkAuth = require('../middleware/check-auth');
+const checkAuth = require("../middleware/check-auth");
+require("dotenv").config();
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+const genAI = new GoogleGenerativeAI(process.env.CHAT_API_KEY);
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+const generte = async (prompt) => {
+  try {
+    const result = await model.generateContent(prompt);
+    return result.response.text();
+  } catch (error) {
+    res.status(501).send(error);
+  }
+};
+
+router.post("/google-api-Gemini/your-query", async (req, res) => {
+  try {
+    const data = req.body.question;
+    const result = await generte(data);
+    res.status(201).send(result);
+  } catch (error) {
+    // console.log("error", error);
+    res.status(501).send({
+      message: "Server Error",
+      error: error,
+    });
+  }
+});
 
 ///////////// All http  method for using is async wait ///////////////////
 
+router.get("/test-Cutomer", (req, res) => {
+  res.send("Customer Route is Activated is Running");
+});
 
-router.post("/customer",checkAuth,async (req, res) => {
+router.post("/customer", async (req, res) => {
   try {
     const user = new Customer(req.body);
-    console.log(user);
+    const { firstName, lastName, email_id, phone_Number, department, dob } =
+      req.body;
+    // console.log(user);
     await user.save();
+
     res.status(201).send(user);
   } catch (error) {
     res.status(400).send(error);
@@ -21,7 +52,7 @@ router.post("/customer",checkAuth,async (req, res) => {
 
 /////////////////////// get all Customer data//////////////// //
 
-router.get("/customer", checkAuth, async (req, res) => {
+router.get("/all-customer", async (req, res) => {
   // console.log("required",req)
   try {
     const users = await Customer.find();
@@ -34,7 +65,7 @@ router.get("/customer", checkAuth, async (req, res) => {
 
 /////////////////////// get Customer By Id data//////////////// //
 
-router.get("/customer/:id", checkAuth, async (req, res) => {
+router.get("customer/:id", async (req, res) => {
   try {
     // console.log(req.params.id);
     const users = await Customer.findById(req.params.id);
@@ -47,7 +78,7 @@ router.get("/customer/:id", checkAuth, async (req, res) => {
 
 /////////////////////// get Customer By search by single Filelds key Id data//////////////// //
 
-router.get("/customer-search/:key", checkAuth, async (req, res) => {
+router.get("customer/search/:key", checkAuth, async (req, res) => {
   try {
     // console.log(`search?query=${req.params.key}`);
     const users = await Customer.find({
@@ -58,7 +89,7 @@ router.get("/customer-search/:key", checkAuth, async (req, res) => {
         },
       ],
     });
-    console.log("gets", users);
+    // console.log("gets", users);
     res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error);
@@ -67,12 +98,12 @@ router.get("/customer-search/:key", checkAuth, async (req, res) => {
 
 /////////////////////// get Customer By search querry for multiple filelds Id data//////////////// //
 
-router.get("/customer-query", checkAuth, async (req, res) => {
+router.get("customer/query", checkAuth, async (req, res) => {
   try {
     let searchQuery = req.query;
-    console.log("search? name=:", searchQuery);
+    // console.log("search? name=:", searchQuery);
     const users = await Customer.find(searchQuery);
-    console.log("customers Query=:", users);
+    // console.log("customers Query=:", users);
     // console.log("data Querry",users[0].email_Id);
     res.status(200).send(searchQuery);
   } catch (error) {
@@ -82,7 +113,7 @@ router.get("/customer-query", checkAuth, async (req, res) => {
 
 ////////////////// update Customer for patch value prefix filelds data/////////////////////////////////
 
-router.patch("/customer/:id", checkAuth, async (req, res) => {
+router.patch("customer/:id", checkAuth, async (req, res) => {
   try {
     const id = req.params.id;
     const update = await Customer.findByIdAndUpdate(id, req.body, {
@@ -97,15 +128,15 @@ router.patch("/customer/:id", checkAuth, async (req, res) => {
 
 ////////////////// update Customer for put value prefix filelds data/////////////////////////////////
 
-router.put("/customer/:id", checkAuth, async (req, res) => {
+router.put("customer/:id", checkAuth, async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(req.params);
+    // console.log(req.params);
     const update = await Customer.updateOne(
       { _id: req.params.id },
       { $set: req.body }
     );
-    console.log(update);
+    // console.log(update);
     res.send(update).status(201);
   } catch (error) {
     res.status(404).send(error);
@@ -114,7 +145,7 @@ router.put("/customer/:id", checkAuth, async (req, res) => {
 
 ////////////////// Delete Customer data/////////////////////////////////
 
-router.delete("/customer/:id", checkAuth, async (req, res) => {
+router.delete("customer/:id", checkAuth, async (req, res) => {
   //   console.log(req);
   try {
     const id = req.params.id;

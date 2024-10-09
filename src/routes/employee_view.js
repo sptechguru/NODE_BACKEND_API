@@ -7,6 +7,10 @@ const mongoose = require("mongoose");
 const auth = require("../middleware/auth");
 const checkAuth = require('../middleware/check-auth');
 
+router.get("/get-all", (req, res) => {
+  res.send("My Employedd get Route is Activated")
+});
+
 
 router.post( "/employee",upload.single('photo'), async (req, res, next) => {
     try {
@@ -40,7 +44,7 @@ router.post( "/employee",upload.single('photo'), async (req, res, next) => {
 
 /////////////////////// get all Customer data//////////////// //
 
-router.get("/employee", checkAuth,async (req, res) => {
+router.get("/all-employee", checkAuth,async (req, res) => {
   // console.log("required",req)
   try {
    const {page = 1,limit = 10} = req.query;
