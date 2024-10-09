@@ -6,8 +6,9 @@ const docOptions = {
     title: "Sptech Node Backend Crud API",
     description: "I Full Stack Developer",
   },
-  host: `localhost:${process.env.PORT}/api/V1`,
-  schemes: ["http"],
+  // host: `localhost:${process.env.PORT}/api/V1`,
+  host: `${process.env.API_BASEURL}/api/V1`,
+  schemes: ["http","https"],
 };
 
 const outputFile = "./swagger-output.json";
@@ -17,7 +18,7 @@ const routes = [
   "./src/routes/customer_view.js",
   "./src/routes/employee_view.js",
   "./src/routes/student.js",
-  "./src/routes/myportfolio_View.js",
+  // "./src/routes/myportfolio_View.js",
 
 ];
 

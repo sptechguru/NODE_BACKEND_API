@@ -16,7 +16,7 @@ const port = process.env.PORT || 5000;
 
 const cors = require("cors");
 const csrf = require("csurf");
-app.use(cors("*"));
+app.use(cors());
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Methods", "*");
@@ -37,8 +37,9 @@ app.use(function (req, res, next) {
 
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger-output.json");
-app.use("/api/v1/", RegisterRouter, cutomerRouter, EmployeeRouter, studentRouter,portfolioRouter);
-// app.use("/user-auth", UseRouter);
+app.use("/api/v1/", RegisterRouter, cutomerRouter, EmployeeRouter, studentRouter);
+
+// app.use("/user-auth", UseRouter,portfolioRouter);
 
 
 const options = {
@@ -49,7 +50,7 @@ const options = {
   }
 }
 
-app.use("/swager-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
+app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
 app.listen(port, () => {
   console.log(
