@@ -5,10 +5,9 @@
     "description": "I Full Stack Developer",
     "version": "1.0.0"
   },
-  "host": "https://api-j5mt.onrender.com/api/V1",
+  "host": "api-j5mt.onrender.com/api/V1",
   "basePath": "/",
   "schemes": [
-    "http",
     "https"
   ],
   "paths": {

@@ -6,20 +6,15 @@ const docOptions = {
     title: "Sptech Node Backend Crud API",
     description: "I Full Stack Developer",
   },
-  // host: `localhost:${process.env.PORT}/api/V1`,
-  host: `${process.env.API_BASEURL}/api/V1`,
-  schemes: ["http","https"],
+  host: `${process.env.API_PROd_BASEURL}api/V1`,
 };
 
 const outputFile = "./swagger-output.json";
-// const multipleRoutes = [employee];
 const routes = [
   "./src/routes/Register.js",
   "./src/routes/customer_view.js",
   "./src/routes/employee_view.js",
   "./src/routes/student.js",
-  // "./src/routes/myportfolio_View.js",
-
 ];
 
 /* NOTE: If you are using the express Router, you must pass in the 'routes' only the 

@@ -1,5 +1,6 @@
 
-let customerNewCreate= {  
+let customerNewCreate= 
+{  
     "firstName":"sani",
     "lastName":"pal",
     "email_id":"sani2@gmail.com",
