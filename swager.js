@@ -6,8 +6,8 @@ const docOptions = {
     title: "Sptech Node Backend Crud API",
     description: "I Full Stack Developer",
   },
-  // host: `${process.env.API_PROd_BASEURL}api/V1`,
-  host: `localhost:3000/api/v1`,
+  host: `${process.env.API_PROd_BASEURL}api/v1`,
+  // host: `localhost:3000/api/v1`,
 
 };
 
