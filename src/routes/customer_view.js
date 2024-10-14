@@ -1,9 +1,9 @@
 const express = require("express");
 const router = new express.Router();
 const Customer = require("../models/cutomer");
-const checkAuth = require("../middleware/check-auth");
 require("dotenv").config();
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const checkAuth = require("../middleware/auth");
 const genAI = new GoogleGenerativeAI(process.env.CHAT_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -16,7 +16,7 @@ const generte = async (prompt) => {
   }
 };
 
-router.post("/google-api-Gemini/your-query", async (req, res) => {
+router.post("/google-api-Gemini/your-query", checkAuth, async (req, res) => {
   try {
     const data = req.body.question;
     const result = await generte(data);
@@ -36,7 +36,7 @@ router.get("/test-Cutomer", (req, res) => {
   res.send("Customer Route is Activated is Running");
 });
 
-router.post("/customer", async (req, res) => {
+router.post("/customer", checkAuth, async (req, res) => {
   try {
     const user = new Customer(req.body);
     const { firstName, lastName, email_id, phone_Number, department, dob } =
@@ -52,7 +52,7 @@ router.post("/customer", async (req, res) => {
 
 /////////////////////// get all Customer data//////////////// //
 
-router.get("/all-customer", async (req, res) => {
+router.get("/all-customer", checkAuth, async (req, res) => {
   // console.log("required",req)
   try {
     const users = await Customer.find();
@@ -65,7 +65,7 @@ router.get("/all-customer", async (req, res) => {
 
 /////////////////////// get Customer By Id data//////////////// //
 
-router.get("customer/:id", async (req, res) => {
+router.get("customer/:id", checkAuth, async (req, res) => {
   try {
     // console.log(req.params.id);
     const users = await Customer.findById(req.params.id);

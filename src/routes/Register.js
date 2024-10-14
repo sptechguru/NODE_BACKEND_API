@@ -2,12 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const router = new express.Router();
 const RegisterSchema = require("../models/registers");
-const auth = require("../middleware/auth");
+const checkAuth = require("../middleware/auth");
 const bcrypt = require("bcryptjs");
-const CryptoJS = require("crypto-js");
-const checkAuth = require("../middleware/check-auth");
+const jwt = require("jsonwebtoken");
 
-router.post("/signup", async (req, res) => {
+
+router.post("/register", async (req, res) => {
   try {
     const pass = req.body.password;
     const cpass = req.body.confirm_password;
@@ -21,78 +21,77 @@ router.post("/signup", async (req, res) => {
         password: pass,
         confirm_password: cpass,
       });
-      const token = await userRegistion.AuthGenerateToken();
-      console.log("token data", token);
-      console.log(userRegistion);
-
       const savedb = await userRegistion.save();
-      console.log("page data ", savedb);
-      // now get cookies for token through
-      res.cookie("jwt", token, {
-        expires: new Date(Date.now() + 30000),
-        httpOnly: true,
-      });
-      console.log("Cookies data ", cookie);
+      console.log("Register data ", savedb);
       res.status(201).send(userRegistion);
     } else {
       res.send("Your passwword are Not matching").status(404);
     }
   } catch (error) {
-    res.status(400).send(error);
+    console.log(error);
+    res.status(500).send({ message: "Error", error });
   }
 });
 
+
 router.post("/login", async (req, res) => {
-  console.log("Email: jitendra@gmail.com", req.body.email);
   try {
-    const email = req.body.email;
+    console.log("Data Login", req.body);
+    const email_Id = req.body.email;
     const pass = req.body.password;
-    console.log(`Email id is ${email} and password is ${pass}`);
-    const userCredentials = await RegisterSchema.findOne({ email: email });
-    console.log(userCredentials);
-    console.log("password", userCredentials.password);
-    // userCredentials.password === pass before  normal password condtion used
-    // now compare hash password data based & user fill data
-    const isMatchHasPass = await bcrypt.compare(pass, userCredentials.password);
-    console.log("Match password", isMatchHasPass);
-    const token = await userCredentials.AuthGenerateToken();
-    console.log("token data", token);
-
-    res.cookie("jwt", token, {
-      expires: new Date(Date.now() + 60000),
-      httpOnly: true,
-      secure:true  //for using https service secure mode
-    });
-    console.log("Cookies data ", cookie);
-    console.log("Cookies get data ", req.cookies.jwt);
-
-    if (isMatchHasPass) {
-      res.status(201).send({
-        success: true,
-        message: "Login is succesfully",
-      });
-    } else {
-      res.status(401).send({
-        success: false,
-        message: "Invalid Login Details",
-        data: [],
-      });
+    console.log(`Email id is ${email_Id} and password is ${pass}`);
+    const user = await RegisterSchema.findOne({ email: email_Id });
+    console.log("user datas", user);
+    if (!user) {
+      res.status(401)
+        .json({ message: "Auth failed Invalid User Name & Password" });
     }
+    const isPassEqual = await bcrypt.compare(pass, user.password);
+    console.log("paswword changes", isPassEqual);
+    if (!isPassEqual) {
+      res
+        .status(401)
+        .json({ message: "Auth failed Invalid User Name & Password" });
+    }
+    const data = {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      gender: user.gender,
+      phone_Number: user.phone_Number,
+      password: pass,
+    };
+    const token = jwt.sign(data, process.env.SECRET);
+    console.log("Modify Data", token);
+
+    return res.status(400).json({
+      success: true,
+      message: "Login Successfully",
+      userData: {
+        data,
+        token,
+      },
+    });
   } catch (error) {
+    console.log("login error", error);
     res.status(400).send({
       success: false,
       message: "Invalid Login Details",
+      Error: error,
       data: [],
     });
-    console.log("login error", error);
   }
 });
 
-router.get("/user-details", async (req, res) => {
-  // console.log("required",req)
+
+router.get("/user-details", checkAuth, async (req, res) => {
   try {
-    const users = await RegisterSchema.find();
-    // console.log("get", users);
+    const users = await RegisterSchema.find(
+      {},
+      { password: 0, confirm_password: 0 }
+    );
+    console.log("All users", users);
     res.status(200).send({
       success: true,
       message: "get users Deatils",
@@ -108,7 +107,7 @@ router.get("/user-details", async (req, res) => {
 });
 
 router.get("/reset-password", async (req, res) => {
-  // console.log("required",req)
+  console.log("required",req)
   try {
     const users = await RegisterSchema.find();
     // console.log("get", users);

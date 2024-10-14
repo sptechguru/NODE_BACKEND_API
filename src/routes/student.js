@@ -2,7 +2,7 @@ const express = require("express");
 const router = new express.Router();
 const Student = require("../models/students");
 const multer = require('multer');
-const checkAuth = require('../middleware/check-auth');
+const checkAuth = require("../middleware/auth");
 
 // // now using profile pic uploads ///////////////////
 const storage = multer.diskStorage({

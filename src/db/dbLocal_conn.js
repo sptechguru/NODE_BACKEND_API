@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const DataBase = process.env.LIVEDB;
+const DataBase = process.env.NEWDB;
 // const ServerDb = process.env.LIVEDB;
 
 mongoose

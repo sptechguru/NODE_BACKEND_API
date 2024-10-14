@@ -4,15 +4,14 @@ const cloudinary = require("../utils/cloudinary");
 const upload = require("../utils/multer");
 const Customer = require("../models/employee");
 const mongoose = require("mongoose");
-const auth = require("../middleware/auth");
-const checkAuth = require('../middleware/check-auth');
+const checkAuth = require('../middleware/auth');
 
 router.get("/get-all", (req, res) => {
   res.send("My Employedd get Route is Activated")
 });
 
 
-router.post( "/employee",upload.single('photo'), async (req, res, next) => {
+router.post( "/employee" ,upload.single('photo'), checkAuth, async (req, res, next) => {
     try {
       // Upload image to cloudinary
       const result = await cloudinary.uploader.upload(req.file.path);

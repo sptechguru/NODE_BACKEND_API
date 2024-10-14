@@ -1,20 +1,25 @@
 const jwt = require("jsonwebtoken");
-const RegisterSchema = require("../models/registers");
 
-const auth = async (req, res, next) => {
+const checkAuth = async (req, res, next) => {
+  // console.log(req.header);
+  if (!req.headers["authorization"]) {
+    // console.log(process.env.SECRET);
+    return res
+      .status(401)
+      .json({ messge: "Token is Required." });
+  }
   try {
-    const token = req.cookies.jwt;
-    const verifyuser = jwt.verify(token, env.process.SECRET_KEY);
-    console.log("verifyuser..", verifyuser);
-    const user = await RegisterSchema.findOne({id:verifyuser._id});
-    console.log("user..", user);
-    req.token = token;
-    req.user = user;
-    next();
+    const decoded = jwt.verify(
+      req.headers["authorization"],
+      process.env.SECRET
+    );
+
+    console.log("decoded Token", decoded);
+    return next();
   } catch (error) {
     console.log("Error for Auth services for 401");
-    res.status(401).send(error);
+    res.status(401).send({ error: "Token is Not Valid or it's Expired" });
   }
 };
 
-module.exports = auth;
+module.exports = checkAuth;
