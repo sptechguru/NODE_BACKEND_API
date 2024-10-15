@@ -49,9 +49,7 @@ router.post("/login", async (req, res) => {
     const isPassEqual = await bcrypt.compare(pass, user.password);
     console.log("paswword changes", isPassEqual);
     if (!isPassEqual) {
-      res
-        .status(401)
-        .json({ message: "Auth failed Invalid User Name & Password" });
+      res.status(401).json({ message: "Auth failed Invalid User Name & Password" });
     }
     const data = {
       _id: user._id,
@@ -62,8 +60,10 @@ router.post("/login", async (req, res) => {
       phone_Number: user.phone_Number,
       password: pass,
     };
-    const token = jwt.sign(data, process.env.SECRET);
-    console.log("Modify Data", token);
+    console.log("Secret Key",process.env.JWT_SECRET)
+    const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    console.log("Modify Data Login", token,data);
 
     return res.status(400).json({
       success: true,
@@ -73,6 +73,7 @@ router.post("/login", async (req, res) => {
         token,
       },
     });
+
   } catch (error) {
     console.log("login error", error);
     res.status(400).send({
@@ -107,7 +108,7 @@ router.get("/user-details", checkAuth, async (req, res) => {
 });
 
 router.get("/reset-password", async (req, res) => {
-  console.log("required",req)
+  console.log("required", req)
   try {
     const users = await RegisterSchema.find();
     // console.log("get", users);
