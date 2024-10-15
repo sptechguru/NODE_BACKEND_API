@@ -52,7 +52,7 @@ router.post("/customer", checkAuth, async (req, res) => {
 
 /////////////////////// get all Customer data//////////////// //
 
-router.get("/all-customer", checkAuth, async (req, res) => {
+router.get("/all-customer", async (req, res) => {
   // console.log("required",req)
   try {
     const users = await Customer.find();

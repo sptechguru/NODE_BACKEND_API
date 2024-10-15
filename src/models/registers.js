@@ -68,17 +68,17 @@ const RegiStationSchema = new mongoose.Schema({
 // Now creating middleware using jwt token authrizations
 
 
-// RegiStationSchema.methods.AuthGenerateToken = async function () {
-//   try {
-//     const token = jwt.sign({ id: this._id.toString() }, process.env.SECRET_KEY);
-//     this.tokens = this.tokens.concat({ token: token });
-//     await this.save();
-//     console.log("Your Generate Token", token);
-//     return token;
-//   } catch (error) {
-//     console.log("token error from", error);
-//   }
-// };
+RegiStationSchema.methods.AuthGenerateToken = async function () {
+  try {
+    const token = jwt.sign({ id: this._id.toString() }, process.env.SECRET_KEY);
+    this.tokens = this.tokens.concat({ token: token });
+    await this.save();
+    console.log("Your Generate Token", token);
+    return token;
+  } catch (error) {
+    console.log("token error from", error);
+  }
+};
 
 // Now using of Middleware for schema  before save method  calling method in pre()
 
@@ -88,7 +88,7 @@ RegiStationSchema.pre("save", async function (next) {
     this.password = await bcrypt.hash(this.password, 10);
     console.log(`Hash password is ${this.password}`);
     this.confirm_password = await bcrypt.hash(this.password, 10);
-    // this.email = this.email;
+    this.email = this.email;
     console.log("eeeeeeeeeeeeeeeeeeee", this.email);
   }
   next();
