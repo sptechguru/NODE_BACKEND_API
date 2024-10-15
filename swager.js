@@ -15,8 +15,8 @@ const outputFile = "./swagger-output.json";
 const routes = [
   "./src/routes/Register.js",
   "./src/routes/customer_view.js",
-  // "./src/routes/employee_view.js",
-  // "./src/routes/student.js",
+  "./src/routes/employee_view.js",
+  "./src/routes/student.js",
 ];
 
 /* NOTE: If you are using the express Router, you must pass in the 'routes' only the 
