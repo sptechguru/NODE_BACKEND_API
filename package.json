@@ -6,6 +6,7 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "qa": "cross-env NODE_ENV=production nodemon index.js",
     "graph": "nodemon server.js",
     "swager-dev": "cross-env NODE_ENV=development node swager.js",
     "swager-prod": "cross-env NODE_ENV=production node swager.js"

@@ -110,7 +110,7 @@
         }
       }
     },
-    "/user-details": {
+    "/all-users": {
       "get": {
         "description": "",
         "parameters": [

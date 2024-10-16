@@ -135,23 +135,48 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/user-details", checkAuth, authrizeRoles("ADMIN"), async (req, res) => {
+
+// router.get("/user-profile" ,async (req, res) => {
+// // router.get("/user-profile", checkAuth, authrizeRoles("ADMIN","USER"), async (req, res) => {
+//   try {
+//     const userId =req.user.id;
+
+//     const users = await User.findById({id:userId}, { password: 0});
+//     console.log('user-profile',users,userId)
+//     console.log("All users", users);
+//     res.status(200).send({
+//       success: true,
+//       message: "get User-profile Deatils",
+//       data: users,
+//     });
+//   } catch (error) {
+//     res.status(500).send({
+//       success: false,
+//       message: "User-profile Details Not Found",
+//       data: [],
+//     });
+//   }
+// });
+
+
+router.get("/all-users", checkAuth, authrizeRoles("ADMIN"), async (req, res) => {
   try {
     const users = await User.find({}, { password: 0, confirm_password: 0 });
     console.log("All users", users);
     res.status(200).send({
       success: true,
-      message: "get users Deatils",
+      message: "get All Users Deatils",
       data: users,
     });
   } catch (error) {
     res.status(500).send({
       success: false,
-      message: "users Deatils not Found",
+      message: "Users Deatils Not Found",
       data: [],
     });
   }
 });
+
 
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
