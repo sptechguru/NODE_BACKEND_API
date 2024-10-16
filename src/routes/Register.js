@@ -54,7 +54,7 @@ router.post("/register", async (req, res) => {
     const savedb = await userRegistion.save();
     console.log("Register data ", savedb);
     
-    const apiBaseUrl = `${process.env.APIBASEURL}/api/v1/email-verify/${userRegistion._id}`;
+    const apiBaseUrl = `${process.env.APIBASEURL}api/v1/email-verify/${userRegistion._id}`;
     console.log('base url',apiBaseUrl);
     const emailSend = emailSendUser( userRegistion.email, "Verify Your Email" ,apiBaseUrl);
     console.log("Email send", emailSend);
@@ -195,7 +195,7 @@ router.post("/forgot-password", async (req, res) => {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    const apiBaseUrl = `${process.env.APIBASEURL}/api/v1/reset-password/${token}`;
+    const apiBaseUrl = `${process.env.APIBASEURL}api/v1/reset-password/${token}`;
     const emailSend = emailSendUser( user.email, "Reset Password Succefully",apiBaseUrl);
     console.log("Email send", emailSend);
     res.status(200).send({
