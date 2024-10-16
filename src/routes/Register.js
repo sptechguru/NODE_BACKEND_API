@@ -1,55 +1,107 @@
 require("dotenv").config();
 const express = require("express");
 const router = new express.Router();
-const RegisterSchema = require("../models/registers");
+const User = require("../models/registers");
 const checkAuth = require("../middleware/auth");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const dotenvFlow = require("dotenv-flow");
+const authrizeRoles = require("../middleware/rolesMiddleware");
+dotenvFlow.config();
+
+const emailSendUser = async (toEmail, hed_Title, apiBaseUrl) => {
+  try {
+    const transporterEmail = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
+      },
+    });
+    const mailOptions = {
+      from: process.env.EMAIL,
+      to: toEmail,
+      subject: hed_Title,
+      text: `Click on the Below Link : ${apiBaseUrl}`,
+    };
+    const EmaiSend = await transporterEmail.sendMail(mailOptions);
+    console.log("Email send", EmaiSend);
+  } catch (error) {
+    res.status(500).send({ message: "Internal Server Error", error });
+  }
+};
 
 
 router.post("/register", async (req, res) => {
   try {
     const pass = req.body.password;
-    const cpass = req.body.confirm_password;
-    if (pass === cpass) {
-      const userRegistion = new RegisterSchema({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        gender: req.body.gender,
-        phone_Number: req.body.phone_Number,
-        password: pass,
-        confirm_password: cpass,
-      });
-      const savedb = await userRegistion.save();
-      console.log("Register data ", savedb);
-      res.status(201).send(userRegistion);
-    } else {
-      res.send("Your passwword are Not matching").status(404);
+    const { email } = req.body;
+    const userExist =  await User.findOne({email:email});
+    if(userExist){
+      return res.status(400).json({message:"User is Already Exists."})
     }
+    const hashPassword = await bcrypt.hash(pass, 10);
+    // console.log("has Password",hashPassword);
+    const userRegistion = new User({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      gender: req.body.gender,
+      phone_Number: req.body.phone_Number,
+      password: hashPassword,
+    });
+    const savedb = await userRegistion.save();
+    console.log("Register data ", savedb);
+    
+    const apiBaseUrl = `${process.env.APIBASEURL}/api/v1/email-verify/${userRegistion._id}`;
+    console.log('base url',apiBaseUrl);
+    const emailSend = emailSendUser( userRegistion.email, "Verify Your Email" ,apiBaseUrl);
+    console.log("Email send", emailSend);
+    res.status(201).send(savedb); 
   } catch (error) {
     console.log(error);
     res.status(500).send({ message: "Error", error });
+  }
+})
+
+
+router.get("/email-verify/:id", async (req, res) => {
+  const id = req.params.id;
+  console.log("email id ",id);
+  try {
+    const verify_User = await User.findOne({_id: id});
+    console.log('Verfiy user', verify_User)
+    if(!verify_User){
+      return res.status(404).json({message:" User is Not Found"});
+    }
+    if(verify_User.isVerified){
+      return res.status(404).json({message:" User Already is Verified"});
+    }
+    verify_User.isVerified = true;
+    await verify_User.save();
+    res.json({success:true, message:"User Verified Successfully"})
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ message: "Internal Server Error", Error:error});
   }
 });
 
 
 router.post("/login", async (req, res) => {
+  console.log("base url",process.env.APIBASEURL)
   try {
-    console.log("Data Login", req.body);
-    const email_Id = req.body.email;
-    const pass = req.body.password;
-    console.log(`Email id is ${email_Id} and password is ${pass}`);
-    const user = await RegisterSchema.findOne({ email: email_Id });
-    console.log("user datas", user);
+    const { email, password } = req.body;
+    console.log(`Email id is ${email} and password is ${password}`);
+    const user = await User.findOne({ email: email });
+    console.log("Login user Data", user);
     if (!user) {
-      res.status(401)
-        .json({ message: "Auth failed Invalid User Name & Password" });
+      return res .status(401).json({ message: "Auth failed Invalid User Name & Password" });
     }
-    const isPassEqual = await bcrypt.compare(pass, user.password);
+    const isPassEqual = await bcrypt.compare(password, user.password);
     console.log("paswword changes", isPassEqual);
     if (!isPassEqual) {
-      res.status(401).json({ message: "Auth failed Invalid User Name & Password" });
+      return res.status(401).json({ message: "Auth failed Invalid User Name & Password" });
     }
     const data = {
       _id: user._id,
@@ -58,13 +110,13 @@ router.post("/login", async (req, res) => {
       email: user.email,
       gender: user.gender,
       phone_Number: user.phone_Number,
-      password: pass,
+      password: password,
+      isVerified: user.isVerified,
+
     };
-    console.log("Secret Key",process.env.JWT_SECRET)
-    const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    console.log("Modify Data Login", token,data);
-
+    // console.log("Secret Key", process.env.JWT_SECRET);
+    const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1h" });
+    // console.log("Modify Data Login", token,data);
     return res.status(400).json({
       success: true,
       message: "Login Successfully",
@@ -73,25 +125,19 @@ router.post("/login", async (req, res) => {
         token,
       },
     });
-
   } catch (error) {
     console.log("login error", error);
     res.status(400).send({
       success: false,
       message: "Invalid Login Details",
       Error: error,
-      data: [],
     });
   }
 });
 
-
-router.get("/user-details", checkAuth, async (req, res) => {
+router.get("/user-details", checkAuth, authrizeRoles("ADMIN"), async (req, res) => {
   try {
-    const users = await RegisterSchema.find(
-      {},
-      { password: 0, confirm_password: 0 }
-    );
+    const users = await User.find({}, { password: 0, confirm_password: 0 });
     console.log("All users", users);
     res.status(200).send({
       success: true,
@@ -107,23 +153,62 @@ router.get("/user-details", checkAuth, async (req, res) => {
   }
 });
 
-router.get("/reset-password", async (req, res) => {
-  console.log("required", req)
+router.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
   try {
-    const users = await RegisterSchema.find();
-    // console.log("get", users);
+    const user = await User.findOne({ email: email });
+    console.log(
+      "forget password",
+      user,
+      "Email",
+      process.env.EMAIL,
+      process.env.PASSWORD
+    );
+    if (!user) {
+      return res.status(400).send({ message: "User is Not Found ?" });
+    }
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    const apiBaseUrl = `${process.env.APIBASEURL}/api/v1/reset-password/${token}`;
+    const emailSend = emailSendUser( user.email, "Reset Password Succefully",apiBaseUrl);
+    console.log("Email send", emailSend);
     res.status(200).send({
       success: true,
-      message: "password update Succefully",
-      data: users,
+      message: "Check Your Email id Link is Shared",
+      resetUrl: apiBaseUrl,
     });
   } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: "password is not matching",
-      data: [],
+    console.log(error);
+    res.status(500).send({ message: "Error", error });
+  }
+});
+
+router.put("/reset-password/:token", async (req, res) => {
+  const token = req.params.token;
+  const { password } = req.body;
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET, {
+      expiresIn: "1h",
     });
+    console.log("payload", payload);
+
+    const users = await User.findById(payload._id);
+    console.log("reset user pass", users, payload._id);
+
+    if (!users) {
+      return res.status(400).json({ message: "User is Not Found." });
+    }
+    const hashPassword = await bcrypt.hash(password, 10);
+    console.log("HashPassword", hashPassword);
+    users.password = hashPassword;
+    console.log("update password", users);
+    await users.save();
+    res.status(200).json({ message: "Password Reset Succefully." });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error", Error: error });
   }
 });
 
 module.exports = router;
+

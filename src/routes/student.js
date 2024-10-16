@@ -3,6 +3,7 @@ const router = new express.Router();
 const Student = require("../models/students");
 const multer = require('multer');
 const checkAuth = require("../middleware/auth");
+const checkAuthBeareToken = require("../middleware/authBearer_token");
 
 // // now using profile pic uploads ///////////////////
 const storage = multer.diskStorage({
@@ -40,7 +41,7 @@ router.get("/", (req, res) => {
 
 ///////////// All http  method for using is async wait ///////////////////
 
-router.post("/students-pic",upload.single('profile_pic'),async (req, res) => {
+router.post("/students-pic",upload.single('profile_pic'),checkAuthBeareToken,async (req, res) => {
   console.log('files',req.file);
   try {
     const user = new Student({
@@ -101,7 +102,7 @@ router.post("/students" ,checkAuth,async (req, res) => {
 
 /////////////////////// get all students data//////////////// //
 
-router.get("/students", async (req, res) => {
+router.get("/students", checkAuthBeareToken, async (req, res) => {
   // console.log("required",req)
   try {
     const users = await Student.find();

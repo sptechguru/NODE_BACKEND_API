@@ -1,19 +1,18 @@
 const mongoose = require("mongoose");
+require("dotenv").config();
+const dotenvFlow = require("dotenv-flow");
+dotenvFlow.config();
 
-const mernPort = process.env.LIVEDB;
-
-mongoose
-  .connect(mernPort, {
-    // useNewUrlParser: true,
-    // useUnifiedTopology: true,
-    // useCreateIndex:true,
-  })
-
-  .then(() => {
+exports.connectDB = async () => {
+  try {
+    const DBURL = process.env.LIVEDB;
+    const res = await mongoose.connect(DBURL);
     console.log(
-      `Good Job Your Cluster Live Data Base connection is  Successfully.${mernPort}`
+      "Good Job Your Data Base connection is Successfully Connected. " + DBURL
     );
-  })
-  .catch((err) => {
-    console.log("............. No connection ..............." + err);
-  });
+  } catch (error) {
+    console.log(
+      "............. No  Data Base connection ..............." + error
+    );
+  }
+};

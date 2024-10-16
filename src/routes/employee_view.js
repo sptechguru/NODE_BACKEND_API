@@ -5,6 +5,7 @@ const upload = require("../utils/multer");
 const Customer = require("../models/employee");
 const mongoose = require("mongoose");
 const checkAuth = require('../middleware/auth');
+const authrizeRoles = require("../middleware/rolesMiddleware");
 
 router.get("/get-all", (req, res) => {
   res.send("My Employedd get Route is Activated")
@@ -43,7 +44,7 @@ router.post( "/employee" ,upload.single('photo'), checkAuth, async (req, res, ne
 
 /////////////////////// get all Customer data//////////////// //
 
-router.get("/all-employee", checkAuth,async (req, res) => {
+router.get("/all-employee", checkAuth, authrizeRoles("ADMIN","EMPLOYEE","USER"),async (req, res) => {
   // console.log("required",req)
   try {
    const {page = 1,limit = 10} = req.query;

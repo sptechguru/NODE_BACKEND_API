@@ -2,30 +2,34 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 require("dotenv").config();
+
+require("./src/db/clusterdb_server.js").connectDB();
+
 const cutomerRouter = require("./src/routes/customer_view");
 const studentRouter = require("./src/routes/student");
 const portfolioRouter = require("./src/routes/myportfolio_View");
 const RegisterRouter = require("./src/routes/Register");
-const EmployeeRouter = require("./src/routes/employee_view")
+const EmployeeRouter = require("./src/routes/employee_view");
 const aut2FaRouter = require("./src/routes/Auth-route");
-
-
+const dotenvFlow = require("dotenv-flow");
+dotenvFlow.config();
 // const UseRouter = require("./src/Auth/user");
-// require("./src/db/dbLocal_conn");
-require("./src/db/clusterdb_server");
 
 app.use(bodyParser.json());
 const port = process.env.PORT || 5000;
-
+const helmet = require('helmet'); 
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const csrf = require("csurf");
 
-app.use(cors());
+app.use('*', cors());
+app.use(helmet());
 
 // app.use((req, res, next) => {
 //   res.setHeader(
-//     "Access-Control-Allow-Origin",`${process.env.API_PROd_BASEURL}`
+//     // "Access-Control-Allow-Origin",`${process.env.API_PROd_BASEURL}`
+//     "Access-Control-Allow-Origin",`*`
+
 //   );
 //   res.setHeader(
 //     "Access-Control-Allow-Methods",
@@ -50,29 +54,26 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(bodyParser.json());
 
-// implemention Swagger Api Documetion
 
+// implemention Swagger Api Documetion
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger-output.json");
-app.use("/api/v1", RegisterRouter, cutomerRouter, EmployeeRouter, studentRouter);
 
+app.use( "/api/v1", RegisterRouter,cutomerRouter,EmployeeRouter,studentRouter);
 // app.use("/user-auth", UseRouter,portfolioRouter);
 
-const options = {
+const swagerOptions = {
   // explorer: true,
-  customCss: '.swagger-ui .topbar { display: none }',
+  customCss: ".swagger-ui .topbar { display: none }",
   swaggerOptions: {
-    validatorUrl: null
-  }
-}
+    validatorUrl: null,
+  },
+};
 app.use("/api/auth/", aut2FaRouter);
-
-app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
-
-
+app.use("/", swaggerUi.serve, swaggerUi.setup(swaggerDocument, swagerOptions));
 
 app.listen(port, () => {
   console.log(
-    `Your Connection is Success And Port Number is: http://localhost:${port}`
+    `Your Connection  ${process.env.ENV} Server & Base Url is ${process.env.APIBASEURL} is Success & Port Number is:${port}`
   );
 });

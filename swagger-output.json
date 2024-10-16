@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "title": "Sptech Node Backend Crud API",
-    "description": "I Full Stack Developer",
+    "description": "Node.js API provides a secure authentication and authorization system, featuring user signup, login, and email verification. It supports role-based access control (RBAC) to manage user roles, ensuring granular permission management. The API leverages Bearer token authentication for secure session handling and token-based authorization, ensuring only verified users can access protected resources. Designed for scalability, it offers robust security, including JWT token issuance and validation.",
     "version": "1.0.0"
   },
   "host": "sptech-api-v1.onrender.com/api/v1",
@@ -22,36 +22,57 @@
               "type": "object",
               "properties": {
                 "password": {
-                  "example": "any"
-                },
-                "confirm_password": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "firstName": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "lastName": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "email": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "gender": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "string"
                 }
               }
             }
           }
         ],
         "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/email-verify/{id}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
           "200": {
             "description": "OK"
           },
-          "201": {
-            "description": "Created"
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -70,10 +91,10 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "password": {
-                  "example": "any"
+                  "example": "string"
                 }
               }
             }
@@ -106,18 +127,74 @@
           "401": {
             "description": "Unauthorized"
           },
+          "403": {
+            "description": "Forbidden"
+          },
           "500": {
             "description": "Internal Server Error"
           }
         }
       }
     },
-    "/reset-password": {
-      "get": {
+    "/forgot-password": {
+      "post": {
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/reset-password/{token}": {
+      "put": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "password": {
+                  "example": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "500": {
             "description": "Internal Server Error"
@@ -141,7 +218,7 @@
               "type": "object",
               "properties": {
                 "question": {
-                  "example": "any"
+                  "example": "string"
                 }
               }
             }
@@ -186,22 +263,22 @@
               "type": "object",
               "properties": {
                 "firstName": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "lastName": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "email_id": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "department": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "dob": {
-                  "example": "any"
+                  "example": "string"
                 }
               }
             }
@@ -421,31 +498,31 @@
               "type": "object",
               "properties": {
                 "firstName": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "lastName": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "email_Id": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "dob": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "education": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "company": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "jobExperience": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "salary": {
-                  "example": "any"
+                  "example": "string"
                 }
               }
             }
@@ -490,6 +567,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -568,19 +648,19 @@
               "type": "object",
               "properties": {
                 "firstName": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "lastName": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "dob": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "department": {
-                  "example": "any"
+                  "example": "string"
                 }
               }
             }
@@ -687,22 +767,32 @@
         "description": "",
         "parameters": [
           {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "email_Id": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "string"
                 },
                 "address": {
-                  "example": "any"
+                  "example": "string"
                 }
               }
             }
@@ -714,6 +804,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }
@@ -742,9 +835,24 @@
       },
       "get": {
         "description": "",
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
             "description": "Internal Server Error"

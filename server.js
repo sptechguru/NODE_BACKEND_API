@@ -5,9 +5,11 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const { USERS } = require("./src/Graph-Ql/User");
 const { TODOS } = require("./src/Graph-Ql/Todos");
-const port = process.env.PORT || 5000;
+require("dotenv").config();
 
-async function startServer() {
+const port = process.env.PORT;
+
+async function startGraphServer()  {
   const app = express();
   const server = new ApolloServer({
     typeDefs: `
@@ -51,9 +53,17 @@ async function startServer() {
 
   await server.start();
 
-  app.use("/", expressMiddleware(server));
+  app.use("/graph", expressMiddleware(server));
 
-  app.listen(port, () => console.log("Serevr Started at PORT is http://localhost:" + port));
+  app.listen(port, () =>
+    console.log("GraphQl Server Started at PORT is http://localhost:" + port)
+  );
 }
 
-startServer();
+
+module.exports = {
+  startGraphServer
+};
+
+
+startGraphServer();
