@@ -53,8 +53,8 @@ const RegiStationSchema = new mongoose.Schema({
   },
 
   roles: {
-    type: [String]
-    ,enum:['USER',"ADMIN","EMPLOYEE"]
+    type: String,
+    enum:['USER',"ADMIN","EMPLOYEE"]
   },
 
 

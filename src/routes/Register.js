@@ -49,6 +49,7 @@ router.post("/register", async (req, res) => {
       email: req.body.email,
       gender: req.body.gender,
       phone_Number: req.body.phone_Number,
+      roles: req.body.roles,
       password: hashPassword,
     });
     const savedb = await userRegistion.save();
@@ -58,10 +59,16 @@ router.post("/register", async (req, res) => {
     console.log('base url',apiBaseUrl);
     const emailSend = emailSendUser( userRegistion.email, "Verify Your Email" ,apiBaseUrl);
     console.log("Email send", emailSend);
-    res.status(201).send(savedb); 
+    res.status(201).send({
+      success: true,
+      message: "Check Your Email Register Link Sent it",
+      resetUrl: apiBaseUrl,
+      data: savedb
+    });
+  
   } catch (error) {
     console.log(error);
-    res.status(500).send({ message: "Error", error });
+    res.status(500).send({ message: "Internal Server Error", Error:error});
   }
 })
 
@@ -117,7 +124,7 @@ router.post("/login", async (req, res) => {
     // console.log("Secret Key", process.env.JWT_SECRET);
     const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1h" });
     // console.log("Modify Data Login", token,data);
-    return res.status(400).json({
+    return res.status(200).json({
       success: true,
       message: "Login Successfully",
       userData: {
