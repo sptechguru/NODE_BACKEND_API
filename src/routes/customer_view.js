@@ -32,9 +32,6 @@ router.post("/google-api-Gemini/your-query", checkAuth, async (req, res) => {
 
 ///////////// All http  method for using is async wait ///////////////////
 
-router.get("/test-Cutomer", (req, res) => {
-  res.send("Customer Route is Activated is Running");
-});
 
 router.post("/customer", checkAuth, async (req, res) => {
   try {
@@ -159,5 +156,11 @@ router.delete("customer/:id", checkAuth, async (req, res) => {
     res.send(error).status(400);
   }
 });
+
+
+router.get("/live-test-Route", (req, res) => {
+  res.send("live-test-Route is Activated is Running");
+});
+
 
 module.exports = router;

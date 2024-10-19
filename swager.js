@@ -16,6 +16,7 @@ const docOptions = {
 const outputFile = "./swagger-output.json";
 const routes = [
   "./src/routes/Register.js",
+  "./src/Auth2Fa/Routes/auth2fa_view.js",
   "./src/routes/customer_view.js",
   "./src/routes/employee_view.js",
   "./src/routes/student.js",
