@@ -106,7 +106,6 @@ router.get("/students", checkAuthBeareToken, async (req, res) => {
   // console.log("required",req)
   try {
     const users = await Student.find();
-    console.log("get All Students data", users);
     res.status(201).send({
       success:true,
       message:"students details found.",
@@ -125,9 +124,7 @@ router.get("/students", checkAuthBeareToken, async (req, res) => {
 
 router.get("/students/:id", checkAuth,async (req, res) => {
   try {
-    // console.log(req.params.id);
     const users = await Student.findById(req.params.id);
-    // console.log("get", users);
     res.status(200).send({
       success:true,
       message:"Students details found.",
@@ -146,7 +143,6 @@ router.get("/students/:id", checkAuth,async (req, res) => {
 
 router.get("/students-search/:key", checkAuth, async (req, res) => {
   try {
-    // console.log(`search?query=${req.params.key}`);
     const users = await Student.find({
       $or: [
         {
@@ -167,7 +163,6 @@ router.get("/students-search/:key", checkAuth, async (req, res) => {
 router.get("/students-query", checkAuth, async (req, res) => {
   try {
     let searchQuery = req.query;
-    console.log("search? name=:", searchQuery);
     const users = await Student.find(searchQuery);
     console.log("students Query=:", users);
     // console.log("data Querry",users[0].email_Id);
@@ -185,7 +180,6 @@ router.patch("/students/:id", checkAuth, async (req, res) => {
     const update = await Student.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-    // console.log(update);
     res.status(201).send({
       success:true,
       message:"students Details update succefully",
@@ -201,7 +195,6 @@ router.patch("/students/:id", checkAuth, async (req, res) => {
 router.put("/students/:id", checkAuth, async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(req.params);
     const update = await Student.updateOne(
       { _id: req.params.id },
       { $set: req.body }
@@ -223,7 +216,6 @@ router.delete("/students/:id", checkAuth, async (req, res) => {
   //   console.log(req);
   try {
     const id = req.params.id;
-    // console.log(id);
     const delteData = await Student.findByIdAndDelete(req.params.id);
     if (!req.params.id) {
       return res.status(500).send("server Error");

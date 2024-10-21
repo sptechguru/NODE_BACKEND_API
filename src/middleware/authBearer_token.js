@@ -16,7 +16,6 @@ const checkAuthBeareToken = async (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
-    console.log("decoded Token", req.user);
     next();
   } catch (error) {
     res.status(401).send({ error: "Token is Not Valid or it's Expired" });

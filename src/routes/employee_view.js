@@ -18,7 +18,6 @@ router.post( "/employee" ,upload.single('photo'), checkAuth, async (req, res, ne
     try {
       // Upload image to cloudinary
       const result = await cloudinary.uploader.upload(req.file.path);
-      console.log(result);
       const user = new Customer({
         _id: new mongoose.Types.ObjectId(),
         firstName: req.body.firstName,
@@ -33,8 +32,6 @@ router.post( "/employee" ,upload.single('photo'), checkAuth, async (req, res, ne
         photo: result.secure_url,
         cloudnary_Pic_id: result.public_id
       });
-      // const user = new Customer(req.body);
-      console.log(user);
       await user.save();
       res.status(201).send(user);
     } catch (error) {
@@ -47,7 +44,6 @@ router.post( "/employee" ,upload.single('photo'), checkAuth, async (req, res, ne
 /////////////////////// get all Customer data//////////////// //
 
 router.get("/get-all-employee", checkAuth, authrizeRoles("ADMIN","EMPLOYEE","USER"),async (req, res) => {
-  // console.log("required",req)
   try {
    const {page = 1,limit = 10} = req.query;
     const posts = await Customer.find()
@@ -65,9 +61,7 @@ router.get("/get-all-employee", checkAuth, authrizeRoles("ADMIN","EMPLOYEE","USE
 
 router.get("/employee/:id", checkAuth, async (req, res) => {
   try {
-    // console.log(req.params.id);
     const users = await Customer.findById(req.params.id);
-    // console.log("get", users);
     res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error);
@@ -78,7 +72,6 @@ router.get("/employee/:id", checkAuth, async (req, res) => {
 
 router.get("/employee-search/:key", checkAuth, async (req, res) => {
   try {
-    // console.log(`search?query=${req.params.key}`);
     const users = await Customer.find({
       $or: [
         {
@@ -87,7 +80,6 @@ router.get("/employee-search/:key", checkAuth, async (req, res) => {
         },
       ],
     });
-    console.log("gets", users);
     res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error);
@@ -99,10 +91,7 @@ router.get("/employee-search/:key", checkAuth, async (req, res) => {
 router.get("/employee-query",checkAuth, async (req, res) => {
   try {
     let searchQuery = req.query;
-    console.log("search? name=:", searchQuery);
     const users = await Customer.find(searchQuery);
-    console.log("customers Query=:", users);
-    // console.log("data Querry",users[0].email_Id);
     res.status(200).send(searchQuery);
   } catch (error) {
     res.status(500).send(error);
@@ -170,10 +159,8 @@ router.put("/employee/:id", upload.single("profile_pic"), async (req, res) => {
 ////////////////// Delete Customer data/////////////////////////////////
 
 router.delete("/employee/:id",checkAuth, async (req, res) => {
-  //   console.log(req);
   try {
     const id = req.params.id;
-    // console.log(id);
     const delteData = await Customer.findByIdAndDelete(req.params.id);
     await cloudinary.uploader.destroy(delteData.cloudnary_Pic_id);
     if (!req.params.id) {
