@@ -42,7 +42,6 @@ router.post("/register", async (req, res) => {
       return res.status(400).json({message:"User is Already Exists."})
     }
     const hashPassword = await bcrypt.hash(pass, 10);
-    // console.log("has Password",hashPassword);
     const userRegistion = new User({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -53,12 +52,9 @@ router.post("/register", async (req, res) => {
       password: hashPassword,
     });
     const savedb = await userRegistion.save();
-    console.log("Register data ", savedb);
-    
+    // console.log("Register data ", savedb);
     const apiBaseUrl = `${process.env.APIBASEURL}api/v1/email-verify/${userRegistion._id}`;
-    console.log('base url',apiBaseUrl);
     const emailSend = emailSendUser( userRegistion.email, "Verify Your Email" ,apiBaseUrl);
-    console.log("Email send", emailSend);
     res.status(201).send({
       success: true,
       message: "Check Your Email Register Link Sent it",
@@ -189,13 +185,6 @@ router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
     const user = await User.findOne({ email: email });
-    console.log(
-      "forget password",
-      user,
-      "Email",
-      process.env.EMAIL,
-      process.env.PASSWORD
-    );
     if (!user) {
       return res.status(400).send({ message: "User is Not Found ?" });
     }
@@ -204,7 +193,7 @@ router.post("/forgot-password", async (req, res) => {
     });
     const apiBaseUrl = `${process.env.APIBASEURL}api/v1/reset-password/${token}`;
     const emailSend = emailSendUser( user.email, "Reset Password Succefully",apiBaseUrl);
-    console.log("Email send", emailSend);
+    // console.log("Email send", emailSend);
     res.status(200).send({
       success: true,
       message: "Check Your Email id Link is Shared",
@@ -223,18 +212,13 @@ router.put("/reset-password/:token", async (req, res) => {
     const payload = jwt.verify(token, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    console.log("payload", payload);
-
     const users = await User.findById(payload._id);
-    console.log("reset user pass", users, payload._id);
-
+    // console.log("reset user pass", users, payload._id);
     if (!users) {
       return res.status(400).json({ message: "User is Not Found." });
     }
     const hashPassword = await bcrypt.hash(password, 10);
-    console.log("HashPassword", hashPassword);
     users.password = hashPassword;
-    console.log("update password", users);
     await users.save();
     res.status(200).json({ message: "Password Reset Succefully." });
   } catch (error) {

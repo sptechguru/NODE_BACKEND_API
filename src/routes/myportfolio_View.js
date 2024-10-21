@@ -1,15 +1,19 @@
 
 const router = require("express").Router()
+const profiledata = require('../db/portfolio_data');
 // const router = new express.Router();
 const { Intro, About, Project, Education, Expereince, Skill } = require("../models/portFolio");
 /////////////////////////// get all Portfoliod Data//////////////////
 
-router.get("/", (req, res) => {
-  res.send("My Portfolio get Route is Activated")
-});
+// router.get("/", (req, res) => {
+//   res.send("My Portfolio get Route is Activated")
+// });
 
-router.get("/get-portfolio-data", async (req, res) => {
-  console.log("required", req)
+// // router.get('/portfolio', (req, res) => {
+// //   res.json(profiledata);  // Send JSON data as the response
+// // });
+
+router.get("/get-portfolio", async (req, res) => {
   try {
     const Intros = await Intro.find();
     const abouts = await About.find();
@@ -17,20 +21,22 @@ router.get("/get-portfolio-data", async (req, res) => {
     const Educations = await Education.find();
     const Expereinces = await Expereince.find();
     const Skills = await Skill.find();
-    // console.log("get", users);
-    res.status(200).send({
+    const usrerProfile = {
       intro: Intros[0],
       about: abouts[0],
       projects: Projects,
       education: Educations,
       experience: Expereinces,
       skills: Skills
-    });
+    }
+    // console.log('All user Profile data', usrerProfile)
+    res.status(200).send(usrerProfile);
   }
   catch (error) {
     res.status(500).send(error);
   }
 });
+
 
 
 ///////////////////////////  Update Intro Portfoliod Data//////////////////

@@ -22,7 +22,6 @@ router.post("/google-api-Gemini/your-query", checkAuth, async (req, res) => {
     const result = await generte(data);
     res.status(201).send(result);
   } catch (error) {
-    // console.log("error", error);
     res.status(501).send({
       message: "Server Error",
       error: error,
@@ -32,13 +31,11 @@ router.post("/google-api-Gemini/your-query", checkAuth, async (req, res) => {
 
 ///////////// All http  method for using is async wait ///////////////////
 
-
 router.post("/customer", checkAuth, async (req, res) => {
   try {
     const user = new Customer(req.body);
     const { firstName, lastName, email_id, phone_Number, department, dob } =
       req.body;
-    // console.log(user);
     await user.save();
 
     res.status(201).send(user);
@@ -50,10 +47,8 @@ router.post("/customer", checkAuth, async (req, res) => {
 /////////////////////// get all Customer data//////////////// //
 
 router.get("/all-customer", async (req, res) => {
-  // console.log("required",req)
   try {
     const users = await Customer.find();
-    // console.log("get", users);
     res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error);
@@ -64,9 +59,7 @@ router.get("/all-customer", async (req, res) => {
 
 router.get("customer/:id", checkAuth, async (req, res) => {
   try {
-    // console.log(req.params.id);
     const users = await Customer.findById(req.params.id);
-    // console.log("get", users);
     res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error);
@@ -86,7 +79,6 @@ router.get("customer/search/:key", checkAuth, async (req, res) => {
         },
       ],
     });
-    // console.log("gets", users);
     res.status(200).send(users);
   } catch (error) {
     res.status(500).send(error);
@@ -98,10 +90,7 @@ router.get("customer/search/:key", checkAuth, async (req, res) => {
 router.get("customer/query", checkAuth, async (req, res) => {
   try {
     let searchQuery = req.query;
-    // console.log("search? name=:", searchQuery);
     const users = await Customer.find(searchQuery);
-    // console.log("customers Query=:", users);
-    // console.log("data Querry",users[0].email_Id);
     res.status(200).send(searchQuery);
   } catch (error) {
     res.status(500).send(error);
@@ -116,7 +105,6 @@ router.patch("customer/:id", checkAuth, async (req, res) => {
     const update = await Customer.findByIdAndUpdate(id, req.body, {
       new: true,
     });
-    // console.log(update);
     res.send(update).status(201);
   } catch (error) {
     res.status(404).send(error);
@@ -128,12 +116,10 @@ router.patch("customer/:id", checkAuth, async (req, res) => {
 router.put("customer/:id", checkAuth, async (req, res) => {
   try {
     const id = req.params.id;
-    // console.log(req.params);
     const update = await Customer.updateOne(
       { _id: req.params.id },
       { $set: req.body }
     );
-    // console.log(update);
     res.send(update).status(201);
   } catch (error) {
     res.status(404).send(error);
@@ -143,10 +129,8 @@ router.put("customer/:id", checkAuth, async (req, res) => {
 ////////////////// Delete Customer data/////////////////////////////////
 
 router.delete("customer/:id", checkAuth, async (req, res) => {
-  //   console.log(req);
   try {
     const id = req.params.id;
-    // console.log(id);
     const delteData = await Customer.findByIdAndDelete(req.params.id);
     if (!req.params.id) {
       return res.status(500).send("server Error");
@@ -157,10 +141,8 @@ router.delete("customer/:id", checkAuth, async (req, res) => {
   }
 });
 
-
 router.get("/live-test-Route", (req, res) => {
   res.send("live-test-Route is Activated is Running");
 });
-
 
 module.exports = router;
