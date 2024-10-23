@@ -41,7 +41,7 @@ router.get("/get-portfolio", async (req, res) => {
 
 ///////////////////////////  Update Intro Portfoliod Data//////////////////
 // router.post
-router.put("/update-intro", async (req, res) => {
+router.post("/update-intro", async (req, res) => {
   try {
     const intro = Intro.findOneAndUpdate(
       { _id: req.body._id }, req.body, { new: true }
