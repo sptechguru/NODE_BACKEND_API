@@ -8,7 +8,7 @@ exports.connectDB = async () => {
     const DBURL = process.env.LIVEDB;
     const res = await mongoose.connect(DBURL);
     console.log(
-      "Good Job Your Data Base connection is Successfully Connected. " + DBURL
+      "Good Job Your Data Base connection is Successfully Connected.? " + DBURL
     );
   } catch (error) {
     console.log(

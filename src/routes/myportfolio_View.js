@@ -3,6 +3,10 @@ const router = require("express").Router()
 const profiledata = require('../db/portfolio_data');
 // const router = new express.Router();
 const { Intro, About, Project, Education, Expereince, Skill } = require("../models/portFolio");
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
+const cacheKey = 'myData';
+
 /////////////////////////// get all Portfoliod Data//////////////////
 
 // router.get("/", (req, res) => {
@@ -14,6 +18,11 @@ const { Intro, About, Project, Education, Expereince, Skill } = require("../mode
 // // });
 
 router.get("/get-portfolio", async (req, res) => {
+  if (cache.has(cacheKey)) {
+    console.log('Fetching data from cache..');
+    return res.json(cache.get(cacheKey)); // Return cached data
+  }
+  else{
   try {
     const Intros = await Intro.find();
     const abouts = await About.find();
@@ -29,18 +38,22 @@ router.get("/get-portfolio", async (req, res) => {
       experience: Expereinces,
       skills: Skills
     }
+    cache.set(cacheKey, usrerProfile);
     // console.log('All user Profile data', usrerProfile)
     res.status(200).send(usrerProfile);
   }
   catch (error) {
     res.status(500).send(error);
   }
+}
+
 });
 
 
 
 ///////////////////////////  Update Intro Portfoliod Data//////////////////
 // router.post
+
 router.post("/update-intro", async (req, res) => {
   try {
     const intro = Intro.findOneAndUpdate(
