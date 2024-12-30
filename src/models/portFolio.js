@@ -47,22 +47,22 @@ const introSchema = new Schema({
 });
 
 
-const aboutSchema = new Schema({
-    profileUrl: {
-        type: String,
-        required: true
-    },
+// const aboutSchema = new Schema({
+//     profileUrl: {
+//         type: String,
+//         required: true
+//     },
 
-    short_description: {
-        type: String,
-        required: true
-    },
+//     short_description: {
+//         type: String,
+//         required: true
+//     },
 
-    description: {
-        type: String,
-        required: true
-    },
-})
+//     description: {
+//         type: String,
+//         required: true
+//     },
+// })
 
 
 
@@ -81,25 +81,25 @@ const skillSchema = new Schema({
 
 
 const experienceSchema = new Schema({
-    id: { type: Number, required: true },
-    img: { type: String, required: true },
-    role: { type: String, required: true },
-    company: { type: String, required: true },
-    date: { type: String, required: true },
-    desc: { type: String, required: true },
-    skills: { type: [String], required: true },
-    doc: { type: String, required: true },
+    id: { type: Number },
+    img: { type: String },
+    role: { type: String },
+    company: { type: String },
+    date: { type: String },
+    desc: { type: String },
+    skills: { type: [String] },
+    doc: { type: String },
 });
 
 
 const educationSchema = new Schema({
-    id: { type: Number, required: true },
-    img: { type: String, required: true },
-    school: { type: String, required: true },
-    date: { type: String, required: true },
-    grade: { type: String, required: true },
-    desc: { type: String, required: true },
-    degree: { type: String, required: true },
+    id: { type: Number },
+    img: { type: String },
+    school: { type: String },
+    date: { type: String },
+    grade: { type: String },
+    desc: { type: String },
+    degree: { type: String },
 });
 
 
@@ -169,14 +169,11 @@ const projectSchema = new mongoose.Schema({
 
 
 //  All models Exports
-experienceSchema
-
 module.exports = {
     Intro: mongoose.model('Intros', introSchema),
-    About: mongoose.model('Abouts', aboutSchema),
+    // About: mongoose.model('Abouts', aboutSchema),
     Education: mongoose.model('Educations', educationSchema),
     Expereince: mongoose.model('Expereinces', experienceSchema),
     Skill: mongoose.model('Skills', skillSchema),
     Project: mongoose.model('Projects', projectSchema),
-
 }

@@ -5,10 +5,12 @@ dotenvFlow.config();
 
 exports.connectDB = async () => {
   try {
-    const DBURL = process.env.LIVEDB;
+    // const DBURL = process.env.LIVEDB;
+    const DBURL = 'mongodb+srv://santoshpal61437:pal883910@cluster0.dziy7.mongodb.net/NEW_MEANDB';
+
     const res = await mongoose.connect(DBURL);
     console.log(
-      "Good Job Your Data Base connection is Successfully Connected.? " + DBURL
+      "Good Job Your Cluster Data Base connection is Successfully  Connected.? " + DBURL
     );
   } catch (error) {
     console.log(

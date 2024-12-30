@@ -1,11 +1,9 @@
-
-const router = require("express").Router()
-const profiledata = require('../db/portfolio_data');
-// const router = new express.Router();
-const { Intro, About, Project, Education, Expereince, Skill } = require("../models/portFolio");
-const NodeCache = require('node-cache');
+const router = require("express").Router();
+const profiledata = require("../db/portfolio_data");
+const {Intro,About,Project,Education, Expereince,Skill} = require("../models/portFolio");
+const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
-const cacheKey = 'myData';
+const cacheKey = "myData";
 
 /////////////////////////// get all Portfoliod Data//////////////////
 
@@ -13,16 +11,18 @@ const cacheKey = 'myData';
 //   res.send("My Portfolio get Route is Activated")
 // });
 
-// // router.get('/portfolio', (req, res) => {
-// //   res.json(profiledata);  // Send JSON data as the response
-// // });
+router.get("/portfolio", (req, res) => {
+  res.json(profiledata);
+});
 
 router.get("/get-portfolio", async (req, res) => {
-  if (cache.has(cacheKey)) {
-    console.log('Fetching data from cache..');
-    return res.json(cache.get(cacheKey)); // Return cached data
-  }
-  else{
+  // if (cache.has(cacheKey)) {
+  //   console.log('Fetching data from cache..');
+  //   return res.json(cache.get(cacheKey)); // Return cached data
+  // }
+  // else{
+  //   console.log('fetch called......')
+  // }
   try {
     const Intros = await Intro.find();
     const abouts = await About.find();
@@ -36,59 +36,54 @@ router.get("/get-portfolio", async (req, res) => {
       projects: Projects,
       education: Educations,
       experience: Expereinces,
-      skills: Skills
-    }
+      skills: Skills,
+    };
     cache.set(cacheKey, usrerProfile);
-    // console.log('All user Profile data', usrerProfile)
-    res.status(200).send(usrerProfile);
-  }
-  catch (error) {
+    res.status(200).send({
+      data: usrerProfile,
+      success: true,
+      message: "All Portfolio Details Get Succefully",
+    });
+  } catch (error) {
     res.status(500).send(error);
   }
-}
-
 });
 
-
-
 ///////////////////////////  Update Intro Portfoliod Data//////////////////
-// router.post
 
 router.post("/update-intro", async (req, res) => {
   try {
-    const intro = Intro.findOneAndUpdate(
-      { _id: req.body._id }, req.body, { new: true }
-    ); res.status(200).send({
-      data: intro,
-      success: true,
-      meassage: "Intro Updated Succefully"
-    })
-  }
-  catch (error) {
-    res.status(500).send(error);
-  }
-})
-
-
-
-///////////////////////////  about update Portfoliod Data//////////////////
-
-router.post("/update-about", async (req, res) => {
-  try {
-    const about = Intro.findOneAndUpdate(
-      { _id: req.body._id }, req.body, { new: true }
+    const intro = await Intro.findOneAndUpdate(
+      { _id: req.body._id },req.body,{ new: true }
     );
     res.status(200).send({
-      data: about,
+      data: intro,
       success: true,
-      meassage: "About Updated Succefully"
-    })
-  }
-  catch (error) {
+      message: "Intro Updated Succefully",
+    });
+  } catch (error) {
+    console.log("udate called..........,", error);
     res.status(500).send(error);
   }
-})
+});
 
+///////////////////////////  about update Portfoliod Data///////////////////
+
+// router.post("/update-about", async (req, res) => {
+//   try {
+//     const about = Intro.findOneAndUpdate(
+//       { _id: req.body._id }, req.body, { new: true }
+//     );
+//     res.status(200).send({
+//       data: about,
+//       success: true,
+//        message: "About Updated Succefully"
+//     })
+//   }
+//   catch (error) {
+//     res.status(500).send(error);
+//   }
+// })
 
 ///////////////////////////  Add Expereince Portfoliod Data//////////////////
 
@@ -99,56 +94,44 @@ router.post("/add-experience", async (req, res) => {
     res.status(200).send({
       data: experience,
       success: true,
-      meassage: "Experience added Succefully"
-    })
-  }
-  catch (error) {
+      message: "Experience added Succefully",
+    });
+  } catch (error) {
     res.status(500).send(error);
   }
-})
-
-
+});
 
 ///////////////////////////  update  Expereince Portfoliod Data//////////////////
 
 router.post("/update-experience", async (req, res) => {
   try {
     const experience = await Expereince.findOneAndUpdate(
-      { _id: req.body._id }, req.body, { new: true }
+      { _id: req.body._id },req.body,{ new: true }
     );
     res.status(200).send({
       data: experience,
       success: true,
-      meassage: "Experience updated Succefully"
-    })
-  }
-  catch (error) {
+      message: "Experience updated Succefully",
+    });
+  } catch (error) {
     res.status(500).send(error);
   }
-})
-
-
+});
 
 ///////////////////////////   Expereince delete Portfoliod Data//////////////////
 
 router.post("/delete-experience", async (req, res) => {
   try {
-    const experience = await Expereince.findOneAndDelete(
-      { _id: req.body._id }
-    );
+    const experience = await Expereince.findOneAndDelete({ _id: req.body._id });
     res.status(200).send({
       data: experience,
       success: true,
-      meassage: "Experience deleated Succefully"
-    })
-  }
-  catch (error) {
+      message: "Experience deleated Succefully",
+    });
+  } catch (error) {
     res.status(500).send(error);
   }
-})
-
-
-
+});
 
 ///////////////////////////  Add Project Portfoliod Data//////////////////
 
@@ -159,53 +142,43 @@ router.post("/add-project", async (req, res) => {
     res.status(200).send({
       data: project,
       success: true,
-      meassage: "Project added Succefully"
-    })
-  }
-  catch (error) {
+      message: "Project added Succefully",
+    });
+  } catch (error) {
     res.status(500).send(error);
   }
-})
+});
 
-
-
-///////////////////////////  update  Expereince Portfoliod Data//////////////////
+///////////////////////////  update  Project Portfoliod Data//////////////////
 
 router.post("/update-project", async (req, res) => {
   try {
     const project = await Project.findOneAndUpdate(
-      { _id: req.body._id }, req.body, { new: true }
+      { _id: req.body._id },req.body,{ new: true }
     );
     res.status(200).send({
       data: project,
       success: true,
-      meassage: "Project updated Succefully"
-    })
-  }
-  catch (error) {
+      message: "Project updated Succefully",
+    });
+  } catch (error) {
     res.status(500).send(error);
   }
-})
-
-
+});
 
 ///////////////////////////   delete Project Portfoliod Data//////////////////
 
 router.post("/delete-experience", async (req, res) => {
   try {
-    const project = await Project.findOneAndDelete(
-      { _id: req.body._id }
-    );
+    const project = await Project.findOneAndDelete({ _id: req.body._id });
     res.status(200).send({
       data: project,
       success: true,
-      meassage: "Project deleated Succefully"
-    })
-  }
-  catch (error) {
+      message: "Project deleated Succefully",
+    });
+  } catch (error) {
     res.status(500).send(error);
   }
-})
-
+});
 
 module.exports = router;
