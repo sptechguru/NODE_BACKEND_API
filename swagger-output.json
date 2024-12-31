@@ -5,10 +5,10 @@
     "description": "Node.js API provides a secure authentication and authorization system, featuring user signup, login, and email verification. It supports role-based access control (RBAC) to manage user roles, ensuring granular permission management. The API leverages Bearer token authentication for secure session handling and token-based authorization, ensuring only verified users can access protected resources. Designed for scalability, it offers robust security, including JWT token issuance and validation.",
     "version": "1.0.0"
   },
-  "host": "localhost:3000/api/v1",
+  "host": "sptech-api-v1.onrender.com/api/v1",
   "basePath": "/",
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/register": {
@@ -22,25 +22,25 @@
               "type": "object",
               "properties": {
                 "password": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "firstName": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "lastName": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "email": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "gender": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "roles": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -94,10 +94,10 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "password": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -153,7 +153,7 @@
               "type": "object",
               "properties": {
                 "email": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -189,7 +189,7 @@
               "type": "object",
               "properties": {
                 "password": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -219,10 +219,10 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "password": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -249,10 +249,10 @@
               "type": "object",
               "properties": {
                 "username": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "password": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -330,7 +330,7 @@
               "type": "object",
               "properties": {
                 "token": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -384,7 +384,7 @@
               "type": "object",
               "properties": {
                 "question": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -419,22 +419,22 @@
               "type": "object",
               "properties": {
                 "firstName": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "lastName": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "email_id": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "department": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "dob": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -654,31 +654,31 @@
               "type": "object",
               "properties": {
                 "firstName": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "lastName": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "email_Id": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "dob": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "education": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "company": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "jobExperience": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "salary": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -804,19 +804,19 @@
               "type": "object",
               "properties": {
                 "firstName": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "lastName": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "dob": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "department": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }
@@ -929,16 +929,16 @@
               "type": "object",
               "properties": {
                 "name": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "email_Id": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "phone_Number": {
-                  "example": "any"
+                  "example": "String"
                 },
                 "address": {
-                  "example": "any"
+                  "example": "String"
                 }
               }
             }

@@ -109,27 +109,26 @@ const educationSchema = new Schema({
 const memberSchema = new mongoose.Schema({
     name: {
         type: String,
-        required: true,
+        // required: true,
     },
     img: {
         type: String,
-        required: true,
+        // required: true,
     },
     linkedin: {
         type: String,
-        required: true,
+        // required: true,
     },
     github: {
         type: String,
-        required: true,
+        // required: true,
     }
 });
 
 const projectSchema = new mongoose.Schema({
     id: {
         type: Number,
-        required: true,
-        unique: true
+        // unique: true
     },
     title: {
         type: String,
@@ -141,11 +140,11 @@ const projectSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        required: true
+        // required: true
     },
     image: {
         type: String,
-        required: true
+        // required: true
     },
     tags: {
         type: [String],
@@ -153,7 +152,6 @@ const projectSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        required: true
     },
     github: {
         type: String,
@@ -161,7 +159,7 @@ const projectSchema = new mongoose.Schema({
     },
     webapp: {
         type: String,
-        required: true
+        // required: true
     },
     member: [memberSchema] // Array of members
 });

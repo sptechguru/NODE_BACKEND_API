@@ -73,8 +73,8 @@ app.use(bodyParser.json());
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger-output.json");
 // app.use("/api/2f-auth", aut2FaRouter);
-app.use("/api/v1",RegisterRouter,aut2FaRouter,cutomerRouter,EmployeeRouter,studentRouter);
-app.use("/sptech/api", portfolioRouter);
+app.use("/api/v1",RegisterRouter,aut2FaRouter,portfolioRouter,cutomerRouter,EmployeeRouter,studentRouter);
+// app.use("/api/v1", portfolioRouter);
 
 const swagerOptions = {
   // explorer: false,
