@@ -201,10 +201,14 @@ router.post("/delete-project", async (req, res) => {
 
 router.post("/add-skills", async (req, res) => {
   try {
-    const skills = new Skill(req.body);
-    await skills.save();
+    const skill = new Skill({
+      title: req.body.title,
+      skills: req.body.skills,
+    });
+    const newSkill = await skill.save();
+    console.log('add skills', newSkill);
     res.status(200).send({
-      data: skills,
+      data: newSkill,
       success: true,
       message: "Skills added Succefully",
     });
@@ -217,30 +221,121 @@ router.post("/add-skills", async (req, res) => {
 
 router.post("/update-skills", async (req, res) => {
   try {
-    const skills = await Skill.findOneAndUpdate(
-      { _id: req.body._id },
-      req.body,
-      { new: true }
-    );
+    const { id, title, skills } = req.body;
+
+    if (!id) {
+      return res.status(400).send({
+        success: false,
+        message: "Skill ID is required for updating.",
+      });
+    }
+
+  const updatedSkill = await Skill.findByIdAndUpdate(
+      id,{ title, skills },{ new: true, runValidators: true });
+    if (!updatedSkill) {
+      return res.status(404).send({
+        success: false,
+        message: "Skill not found.",
+      });
+    }
+
     res.status(200).send({
-      data: skills,
+      data: updatedSkill,
       success: true,
-      message: "Skills updated Succefully",
+      message: "Skills updated successfully.",
+    });
+  } 
+  catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "An error occurred while updating skills.",
+      error: error.message,
+    });
+  }
+});
+
+
+///////////////////////////   delete skills Portfoliod Data//////////////////
+
+router.post("/delete-skills", async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    if (!id) {
+      return res.status(400).send({
+        success: false,
+        message: "Skill ID is required for deletion.",
+      });
+    }
+
+    const deletedSkill = await Skill.findByIdAndDelete(id);
+
+    if (!deletedSkill) {
+      return res.status(404).send({
+        success: false,
+        message: "Skill not found.",
+      });
+    }
+
+    res.status(200).send({
+      data: deletedSkill,
+      success: true,
+      message: "Skills deleted successfully.",
+    });
+  } 
+  catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "An error occurred while deleting skills.",
+      error: error.message,
+    });
+  }
+});
+
+
+router.post("/add-education", async (req, res) => {
+  try {
+    const eduCation = new Education(req.body);
+    await eduCation.save();
+    res.status(200).send({
+      data: eduCation,
+      success: true,
+      message: "Education added Succefully",
     });
   } catch (error) {
     res.status(500).send(error);
   }
 });
 
-///////////////////////////   delete skills Portfoliod Data//////////////////
+///////////////////////////  update  Education Portfoliod Data//////////////////
 
-router.post("/delete-skills", async (req, res) => {
+router.post("/update-education", async (req, res) => {
   try {
-    const skills = await Skill.findOneAndDelete({ _id: req.body._id });
+    const eduCation = await Education.findOneAndUpdate(
+      { _id: req.body._id },
+      req.body,
+      { new: true }
+    );
     res.status(200).send({
-      data: skills,
+      data: eduCation,
       success: true,
-      message: "Skills deleated Succefully",
+      message: "Education updated Succefully",
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+///////////////////////////   delete Education Portfoliod Data//////////////////
+
+router.post("/delete-education", async (req, res) => {
+  try {
+    const eduCation = await Education.findOneAndDelete({ _id: req.body._id });
+    // console.log('education...',eduCation)
+    res.status(200).send({
+      data: eduCation,
+      success: true,
+      message: "Education deleated Succefully",
     });
   } catch (error) {
     res.status(500).send(error);
