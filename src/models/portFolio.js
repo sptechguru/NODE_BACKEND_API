@@ -67,16 +67,13 @@ const introSchema = new Schema({
 
 
 const skillSchema = new Schema({
-    title: {
-        type: String,
-        required: true
-    },
-
-    skills: {
-        type: Array,
-        required: true
-    }
-
+    title: { type: String, required: true },
+    skills: [
+      {
+        name: { type: String, required: true },
+        image: { type: String, required: true },
+      }
+    ]
 });
 
 
