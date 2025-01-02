@@ -1,45 +1,21 @@
 const router = require("express").Router();
 const profiledata = require("../db/portfolio_data");
-const {
-  Intro,
-  About,
-  Project,
-  Education,
-  Expereince,
-  Skill,
-} = require("../models/portFolio");
+const { Intro, Project,Education,Expereince,Skill } = require("../models/portFolio");
 const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 const cacheKey = "myData";
 
 /////////////////////////// get all Portfoliod Data//////////////////
 
-// router.get("/", (req, res) => {
-//   res.send("My Portfolio get Route is Activated")
-// });
-
-// router.get("/portfolio", (req, res) => {
-//   res.json(profiledata);
-// });
-
 router.get("/get-portfolio", async (req, res) => {
-  // if (cache.has(cacheKey)) {
-  //   console.log('Fetching data from cache..');
-  //   return res.json(cache.get(cacheKey)); // Return cached data
-  // }
-  // else{
-  //   console.log('fetch called......')
-  // }
   try {
     const Intros = await Intro.find();
-    // const abouts = await About.find();
     const Projects = await Project.find();
     const Educations = await Education.find();
     const Expereinces = await Expereince.find();
     const Skills = await Skill.find();
     const usrerProfile = {
       intro: Intros[0],
-      // about: abouts[0],
       projects: Projects,
       education: Educations,
       experience: Expereinces,
@@ -78,26 +54,6 @@ router.post("/update-intro", async (req, res) => {
     res.status(500).send(error);
   }
 });
-
-///////////////////////////  about update Portfoliod Data///////////////////
-
-// router.post("/update-about", async (req, res) => {
-//   try {
-//     const about = Intro.findOneAndUpdate(
-//       { _id: req.body._id }, req.body, { new: true }
-//     );
-//     res.status(200).send({
-//       data: about,
-//       success: true,
-//        message: "About Updated Succefully"
-//     })
-//   }
-//   catch (error) {
-//     res.status(500).send(error);
-//   }
-// })
-
-///////////////////////////  Add Expereince Portfoliod Data//////////////////
 
 router.post("/add-experience", async (req, res) => {
   try {
@@ -206,7 +162,6 @@ router.post("/add-skills", async (req, res) => {
       skills: req.body.skills,
     });
     const newSkill = await skill.save();
-    console.log('add skills', newSkill);
     res.status(200).send({
       data: newSkill,
       success: true,
@@ -222,30 +177,17 @@ router.post("/add-skills", async (req, res) => {
 router.post("/update-skills", async (req, res) => {
   try {
     const { id, title, skills } = req.body;
-
-    if (!id) {
-      return res.status(400).send({
-        success: false,
-        message: "Skill ID is required for updating.",
-      });
-    }
-
-  const updatedSkill = await Skill.findByIdAndUpdate(
-      id,{ title, skills },{ new: true, runValidators: true });
-    if (!updatedSkill) {
-      return res.status(404).send({
-        success: false,
-        message: "Skill not found.",
-      });
-    }
-
+    const updatedSkill = await Skill.findOneAndUpdate(
+      { _id: req.body._id },
+      req.body,
+      { new: true }
+    );
     res.status(200).send({
       data: updatedSkill,
       success: true,
       message: "Skills updated successfully.",
     });
-  } 
-  catch (error) {
+  } catch (error) {
     res.status(500).send({
       success: false,
       message: "An error occurred while updating skills.",
@@ -254,36 +196,17 @@ router.post("/update-skills", async (req, res) => {
   }
 });
 
-
 ///////////////////////////   delete skills Portfoliod Data//////////////////
 
 router.post("/delete-skills", async (req, res) => {
   try {
-    const { id } = req.body;
-
-    if (!id) {
-      return res.status(400).send({
-        success: false,
-        message: "Skill ID is required for deletion.",
-      });
-    }
-
-    const deletedSkill = await Skill.findByIdAndDelete(id);
-
-    if (!deletedSkill) {
-      return res.status(404).send({
-        success: false,
-        message: "Skill not found.",
-      });
-    }
-
+    const deletedSkill = await Skill.findOneAndDelete({ _id: req.body._id });
     res.status(200).send({
       data: deletedSkill,
       success: true,
       message: "Skills deleted successfully.",
     });
-  } 
-  catch (error) {
+  } catch (error) {
     res.status(500).send({
       success: false,
       message: "An error occurred while deleting skills.",
@@ -291,7 +214,6 @@ router.post("/delete-skills", async (req, res) => {
     });
   }
 });
-
 
 router.post("/add-education", async (req, res) => {
   try {
@@ -331,7 +253,6 @@ router.post("/update-education", async (req, res) => {
 router.post("/delete-education", async (req, res) => {
   try {
     const eduCation = await Education.findOneAndDelete({ _id: req.body._id });
-    // console.log('education...',eduCation)
     res.status(200).send({
       data: eduCation,
       success: true,
@@ -341,5 +262,13 @@ router.post("/delete-education", async (req, res) => {
     res.status(500).send(error);
   }
 });
+
+// router.get("/", (req, res) => {
+//   res.send("My Portfolio get Route is Activated")
+// });
+
+// router.get("/portfolio", (req, res) => {
+//   res.json(profiledata);
+// });
 
 module.exports = router;
