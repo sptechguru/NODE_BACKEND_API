@@ -115,7 +115,7 @@ router.post("/login", async (req, res) => {
       phone_Number: user.phone_Number,
       password: password,
       isVerified: user.isVerified,
-
+      roles: user.roles
     };
     // console.log("Secret Key", process.env.JWT_SECRET);
     const token = jwt.sign(data, process.env.JWT_SECRET, { expiresIn: "1h" });
