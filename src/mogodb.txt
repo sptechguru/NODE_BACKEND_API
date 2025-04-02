@@ -10,10 +10,10 @@ const mernPort = 'mongodb+srv://santoshpal9816:sRvZfG8e21LKwFNN@cluster0.cnvo4ov
 
 ####################### CLUSTERDB#######################
 
-CLUSTER_DB = "mongodb+srv://test123:pal123@$cluster0.bjxrmbt.mongodb.net/demodb?retryWrites=true&w=majority"
+CLUSTER_DB = "mongodb+srv://test123:pal123kdgdjg@$cluster0.bjxrmbt.mongodb.net/demodb?retryWrites=true&w=majority"
 SECRET_KEY ="YOURjhfdhkghkdfghkhdghkhSECURITY_KEY"
 
- mongodb+srv://santosh123:pal123@demodb.wa1hik2.mongodb.net/demodb
+ For Examples : mongodb+srv://santosh123:pal123349tekrgh@demodb.wa1hik2.mongodb.net/demodb
 
  mongodb+srv://test123:*****@cluster0.bjxrmbt.mongodb.net/demodb
 

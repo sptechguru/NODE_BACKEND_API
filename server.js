@@ -7,7 +7,7 @@ const { USERS } = require("./src/Graph-Ql/User");
 const { TODOS } = require("./src/Graph-Ql/Todos");
 require("dotenv").config();
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 async function startGraphServer()  {
   const app = express();
@@ -53,7 +53,7 @@ async function startGraphServer()  {
 
   await server.start();
 
-  app.use("/graph", expressMiddleware(server));
+  app.use("/", expressMiddleware(server));
 
   app.listen(port, () =>
     console.log("GraphQl Server Started at PORT is http://localhost:" + port)
