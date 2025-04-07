@@ -11,7 +11,7 @@ const authrizeRoles = require("../middleware/rolesMiddleware");
 dotenvFlow.config();
 const ejs = require("ejs");
 const path = require("path");
-
+const fs = require("fs");
 
 const emailSendUser = async (toEmail, hed_Title, apiBaseUrl, templateName, context) => {
   try {
@@ -22,11 +22,15 @@ const emailSendUser = async (toEmail, hed_Title, apiBaseUrl, templateName, conte
         pass: process.env.PASSWORD,
       },
     });
-    // Generate HTML from EJS template
-    const templatePath = path.join(__dirname, `../templates/${templateName}.ejs`);
-    const htmlContent = await ejs.renderFile(templatePath, context);
-    console.log("Sent Mail Templates", templatePath, '&& Html Content',htmlContent)
 
+    // 🔧 Resolve template from /src/templates
+    const templatePath = path.resolve(__dirname, "../templates", `${templateName}.ejs`);
+    console.log("Resolved template path:", templatePath);
+
+    if (!fs.existsSync(templatePath)) {
+      throw new Error(`Template not found: ${templatePath}`);
+    }
+    const htmlContent = await ejs.renderFile(templatePath, context || {});
     const mailOptions = {
       from: process.env.EMAIL,
       to: toEmail,
@@ -39,9 +43,7 @@ const emailSendUser = async (toEmail, hed_Title, apiBaseUrl, templateName, conte
   } catch (error) {
     console.error("Error sending email:", error);
   }
-};
-
-
+}
 
 router.post("/register", async (req, res) => {
   try {
@@ -64,7 +66,14 @@ router.post("/register", async (req, res) => {
     const savedb = await userRegistion.save();
     // console.log("Register data ", savedb);
     const apiBaseUrl = `${process.env.APIBASEURL}api/v1/email-verify/${userRegistion._id}`;
-    const emailSend = emailSendUser( userRegistion.email, "Verify Your Email" ,apiBaseUrl,'verifyEmail');
+    await emailSendUser(
+      userRegistion.email,"Verify your email",apiBaseUrl,"verifyEmail",
+      {
+        name: req.body.firstName + req.body.lastName,
+        apiBaseUrl: apiBaseUrl,
+        logoUrl: process.env.COMPANY_LOGO_URL,
+      }
+    );
     res.status(201).send({
       success: true,
       message: "Check Your Email Register Link Sent it",
@@ -102,7 +111,6 @@ router.get("/email-verify/:id", async (req, res) => {
 
 
 router.post("/login", async (req, res) => {
-  console.log("base url",process.env.APIBASEURL)
   try {
     const { email, password } = req.body;
     console.log(`Email id is ${email} and password is ${password}`);
@@ -183,12 +191,20 @@ router.post("/forgot-password", async (req, res) => {
       expiresIn: "1h",
     });
     const apiBaseUrl = `${process.env.APIBASEURL}api/v1/reset-password/${token}`;
-    const emailSend = emailSendUser( user.email, "ForGot Password Succefully",apiBaseUrl,'forgotPassword');
+    // const emailSend = await emailSendUser( user.email, "Forgot Password Succefully",apiBaseUrl,'forgotPassword');
+    await emailSendUser(
+      user.email,"Forgot Password Succefully",apiBaseUrl,"forgotPassword",
+      {
+        email: user.email,
+        apiBaseUrl: apiBaseUrl,
+        logoUrl: process.env.COMPANY_LOGO_URL,
+      }
+    );
     // console.log("Email send", emailSend);
     res.status(200).send({
       success: true,
       message: "Check Your Email id Link is Shared",
-      resetUrl: apiBaseUrl,
+      resetUrl: emailSend,
     });
   } catch (error) {
     console.log(error);
