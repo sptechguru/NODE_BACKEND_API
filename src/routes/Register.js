@@ -9,8 +9,11 @@ const nodemailer = require("nodemailer");
 const dotenvFlow = require("dotenv-flow");
 const authrizeRoles = require("../middleware/rolesMiddleware");
 dotenvFlow.config();
+const ejs = require("ejs");
+const path = require("path");
 
-const emailSendUser = async (toEmail, hed_Title, apiBaseUrl) => {
+
+const emailSendUser = async (toEmail, hed_Title, apiBaseUrl, templateName, context) => {
   try {
     const transporterEmail = nodemailer.createTransport({
       service: "gmail",
@@ -19,18 +22,25 @@ const emailSendUser = async (toEmail, hed_Title, apiBaseUrl) => {
         pass: process.env.PASSWORD,
       },
     });
+    // Generate HTML from EJS template
+    const templatePath = path.join(__dirname, `../templates/${templateName}.ejs`);
+    const htmlContent = await ejs.renderFile(templatePath, context);
+    console.log("Sent Mail Templates", templatePath, '&& Html Content',htmlContent)
+
     const mailOptions = {
       from: process.env.EMAIL,
       to: toEmail,
       subject: hed_Title,
-      text: `Click on the Below Link : ${apiBaseUrl}`,
+      html: htmlContent,
     };
-    const EmaiSend = await transporterEmail.sendMail(mailOptions);
-    console.log("Email send", EmaiSend);
+
+    const emailSend = await transporterEmail.sendMail(mailOptions);
+    console.log("Email sent:", emailSend);
   } catch (error) {
-    res.status(500).send({ message: "Internal Server Error", error });
+    console.error("Error sending email:", error);
   }
 };
+
 
 
 router.post("/register", async (req, res) => {
@@ -54,7 +64,7 @@ router.post("/register", async (req, res) => {
     const savedb = await userRegistion.save();
     // console.log("Register data ", savedb);
     const apiBaseUrl = `${process.env.APIBASEURL}api/v1/email-verify/${userRegistion._id}`;
-    const emailSend = emailSendUser( userRegistion.email, "Verify Your Email" ,apiBaseUrl);
+    const emailSend = emailSendUser( userRegistion.email, "Verify Your Email" ,apiBaseUrl,'verifyEmail');
     res.status(201).send({
       success: true,
       message: "Check Your Email Register Link Sent it",
@@ -162,25 +172,6 @@ router.post("/login", async (req, res) => {
 // });
 
 
-router.get("/all-users", checkAuth, authrizeRoles("ADMIN"), async (req, res) => {
-  try {
-    const users = await User.find({}, { password: 0, confirm_password: 0 });
-    console.log("All users", users);
-    res.status(200).send({
-      success: true,
-      message: "get All Users Deatils",
-      data: users,
-    });
-  } catch (error) {
-    res.status(500).send({
-      success: false,
-      message: "Users Deatils Not Found",
-      data: [],
-    });
-  }
-});
-
-
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   try {
@@ -192,7 +183,7 @@ router.post("/forgot-password", async (req, res) => {
       expiresIn: "1h",
     });
     const apiBaseUrl = `${process.env.APIBASEURL}api/v1/reset-password/${token}`;
-    const emailSend = emailSendUser( user.email, "Reset Password Succefully",apiBaseUrl);
+    const emailSend = emailSendUser( user.email, "ForGot Password Succefully",apiBaseUrl,'forgotPassword');
     // console.log("Email send", emailSend);
     res.status(200).send({
       success: true,
@@ -225,6 +216,26 @@ router.put("/reset-password/:token", async (req, res) => {
     res.status(500).json({ message: "Internal Server Error", Error: error });
   }
 });
+
+
+router.get("/all-users", checkAuth, authrizeRoles("ADMIN"), async (req, res) => {
+  try {
+    const users = await User.find({}, { password: 0, confirm_password: 0 });
+    console.log("All users", users);
+    res.status(200).send({
+      success: true,
+      message: "get All Users Deatils",
+      data: users,
+    });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Users Deatils Not Found",
+      data: [],
+    });
+  }
+});
+
 
 module.exports = router;
 
