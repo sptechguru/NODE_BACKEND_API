@@ -25,7 +25,7 @@ const emailSendUser = async (toEmail, hed_Title, apiBaseUrl, templateName, conte
 
     // 🔧 Resolve template from /src/templates
     const templatePath = path.resolve(__dirname, "../templates", `${templateName}.ejs`);
-    console.log("Resolved template path:", templatePath);
+    // console.log("Resolved template path:", templatePath);
 
     if (!fs.existsSync(templatePath)) {
       throw new Error(`Template not found: ${templatePath}`);
@@ -39,7 +39,7 @@ const emailSendUser = async (toEmail, hed_Title, apiBaseUrl, templateName, conte
     };
 
     const emailSend = await transporterEmail.sendMail(mailOptions);
-    console.log("Email sent:", emailSend);
+    // console.log("Email sent:", emailSend);
   } catch (error) {
     console.error("Error sending email:", error);
   }
@@ -90,10 +90,9 @@ router.post("/register", async (req, res) => {
 
 router.get("/email-verify/:id", async (req, res) => {
   const id = req.params.id;
-  console.log("email id ",id);
   try {
     const verify_User = await User.findOne({_id: id});
-    console.log('Verfiy user', verify_User)
+    // console.log('Verfiy user', verify_User)
     if(!verify_User){
       return res.status(404).json({message:" User is Not Found"});
     }
@@ -113,14 +112,11 @@ router.get("/email-verify/:id", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(`Email id is ${email} and password is ${password}`);
     const user = await User.findOne({ email: email });
-    console.log("Login user Data", user);
     if (!user) {
       return res .status(401).json({ message: "Auth failed Invalid User Name & Password" });
     }
     const isPassEqual = await bcrypt.compare(password, user.password);
-    console.log("paswword changes", isPassEqual);
     if (!isPassEqual) {
       return res.status(401).json({ message: "Auth failed Invalid User Name & Password" });
     }
@@ -190,12 +186,12 @@ router.post("/forgot-password", async (req, res) => {
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
+  // console.log("Email user ",user)
     const apiBaseUrl = `${process.env.APIBASEURL}api/v1/reset-password/${token}`;
-    // const emailSend = await emailSendUser( user.email, "Forgot Password Succefully",apiBaseUrl,'forgotPassword');
-    await emailSendUser(
+    const emailSend = await emailSendUser(
       user.email,"Forgot Password Succefully",apiBaseUrl,"forgotPassword",
       {
-        email: user.email,
+        name: user.firstName +''+ user.lastName,
         apiBaseUrl: apiBaseUrl,
         logoUrl: process.env.COMPANY_LOGO_URL,
       }
@@ -203,8 +199,8 @@ router.post("/forgot-password", async (req, res) => {
     // console.log("Email send", emailSend);
     res.status(200).send({
       success: true,
-      message: "Check Your Email id Link is Shared",
-      resetUrl: emailSend,
+      message: "Please Check Your Email id Link is Shared",
+      // resetUrl: emailSend,
     });
   } catch (error) {
     console.log(error);
@@ -237,7 +233,7 @@ router.put("/reset-password/:token", async (req, res) => {
 router.get("/all-users", checkAuth, authrizeRoles("ADMIN"), async (req, res) => {
   try {
     const users = await User.find({}, { password: 0, confirm_password: 0 });
-    console.log("All users", users);
+    // console.log("All users", users);
     res.status(200).send({
       success: true,
       message: "get All Users Deatils",
