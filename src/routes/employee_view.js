@@ -18,6 +18,7 @@ router.post( "/employee" ,upload.single('photo'), checkAuth, async (req, res, ne
     try {
       // Upload image to cloudinary
       const result = await cloudinary.uploader.upload(req.file.path);
+      console.log("Uplaod Url ::",result)
       const user = new Customer({
         _id: new mongoose.Types.ObjectId(),
         firstName: req.body.firstName,
