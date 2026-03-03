@@ -25,7 +25,6 @@ router.get("/get-portfolio",async (req, res) => {
       experience: Expereinces,
       skills: Skills,
     };
-    console.log("user profiles", userProfile)
     // cache.set(cacheKey, userProfile);
     res.status(200).send({
       data: userProfile,
@@ -43,7 +42,6 @@ router.get("/get-portfolio",async (req, res) => {
 
 ///////////////////////////  Update Intro Portfoliod Data//////////////////
 router.post("/update-intro", upload.single("profile_url"), async (req, res) => {
-  console.log
   try {
     const { _id, ...updateData } = req.body;
 
@@ -73,7 +71,7 @@ router.post("/update-intro", upload.single("profile_url"), async (req, res) => {
 
       // Save image URL in update object
       updateData.profile_url = result.secure_url;
-      console.log("updates data url",updateData.profile_url)
+      // console.log("updates data url",updateData.profile_url)
     }
 
     // ✅ Update document
