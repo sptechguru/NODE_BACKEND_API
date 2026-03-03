@@ -43,6 +43,12 @@ const introSchema = new Schema({
     type: String,
     required: true,
   },
+  
+  profile_url:{
+    type:String,
+    required: true
+  }
+
 });
 
 const skillSchema = new Schema({

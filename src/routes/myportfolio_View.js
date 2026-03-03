@@ -4,26 +4,31 @@ const { Intro, Project,Education,Expereince,Skill } = require("../models/portFol
 const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 const cacheKey = "myData";
+const upload = require("../utils/multer"); // your production multer
+const cloudinary = require("../utils/cloudinary");
+const streamifier = require("streamifier");
+
 
 /////////////////////////// get all Portfoliod Data//////////////////
 
-router.get("/get-portfolio", async (req, res) => {
+router.get("/get-portfolio",async (req, res) => {
   try {
     const Intros = await Intro.find();
     const Projects = await Project.find();
     const Educations = await Education.find();
     const Expereinces = await Expereince.find();
     const Skills = await Skill.find();
-    const usrerProfile = {
+    const userProfile = {
       intro: Intros[0],
       projects: Projects,
       education: Educations,
       experience: Expereinces,
       skills: Skills,
     };
-    // cache.set(cacheKey, usrerProfile);
+    console.log("user profiles", userProfile)
+    // cache.set(cacheKey, userProfile);
     res.status(200).send({
-      data: usrerProfile,
+      data: userProfile,
       success: true,
       message: "All Portfolio get Data Succefully",
     });
@@ -37,23 +42,69 @@ router.get("/get-portfolio", async (req, res) => {
 });
 
 ///////////////////////////  Update Intro Portfoliod Data//////////////////
-
-router.post("/update-intro", async (req, res) => {
+router.post("/update-intro", upload.single("profile_url"), async (req, res) => {
+  console.log
   try {
-    const intro = await Intro.findOneAndUpdate(
-      { _id: req.body._id },
-      req.body,
-      { new: true }
+    const { _id, ...updateData } = req.body;
+
+    if (!_id) {
+      return res.status(400).json({
+        success: false,
+        message: "Intro ID is required",
+      });
+    }
+
+    // ✅ If new image uploaded
+    if (req.file) {
+      const streamUpload = () =>
+        new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            { folder: "portfolio_profile" },
+            (error, result) => {
+              if (result) resolve(result);
+              else reject(error);
+            }
+          );
+
+          streamifier.createReadStream(req.file.buffer).pipe(stream);
+        });
+
+      const result = await streamUpload();
+
+      // Save image URL in update object
+      updateData.profile_url = result.secure_url;
+      console.log("updates data url",updateData.profile_url)
+    }
+
+    // ✅ Update document
+    const intro = await Intro.findByIdAndUpdate(
+      _id,
+      updateData,
+      { new: true, runValidators: true }
     );
-    res.status(200).send({
-      data: intro,
+
+    if (!intro) {
+      return res.status(404).json({
+        success: false,
+        message: "Intro not found",
+      });
+    }
+
+
+    res.status(200).json({
       success: true,
-      message: "Intro Updated Succefully",
+      message: "Intro Updated Successfully",
+      data: intro,
     });
+
   } catch (error) {
-    res.status(500).send(error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 });
+
 
 router.post("/add-experience", async (req, res) => {
   try {

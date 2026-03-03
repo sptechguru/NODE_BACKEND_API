@@ -1,8 +1,11 @@
 const cloudinary = require("cloudinary").v2;
+require("dotenv").config();
+const dotenvFlow = require("dotenv-flow");
+dotenvFlow.config();
 
 cloudinary.config({
-  cloud_name: "sptechpro",
-  api_key: "569142431257534",
-  api_secret: "63NM2H7zGdobZ9RYNqcL4HHycPE",
+  cloud_name:  process.env.CLOUD_NAME,
+  api_key: process.env.CLOUD_API_KEY,
+  api_secret: process.env.CLOUD_API_KEY_SECRET,
 });
 module.exports = cloudinary;
