@@ -1,4 +1,7 @@
 const router = require("express").Router();
+require("dotenv").config();
+const dotenvFlow = require("dotenv-flow");
+dotenvFlow.config();
 const profiledata = require("../db/portfolio_data");
 const { Intro, Project,Education,Expereince,Skill } = require("../models/portFolio");
 const NodeCache = require("node-cache");

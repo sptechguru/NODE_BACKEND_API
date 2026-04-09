@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const speakeasy = require("speakeasy");
 const QRCode = require("qrcode");
+require("dotenv").config();
 const dotenvFlow = require("dotenv-flow");
 dotenvFlow.config();
 
