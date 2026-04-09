@@ -28,11 +28,11 @@ router.post("/ai-chatBoat", async (req, res) => {
     const OPENROUTERURL = "https://openrouter.ai/api/v1/chat/completions"
     const response = await fetch(OPENROUTERURL,{
       method: "POST",
-      headers: {
+        headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${process.env.OPENROUTEKEY}`,
-        // "x-api-key": process.env.ANTHROPIC_API_KEY,
-        // "anthropic-version": "2023-06-01",
+        "HTTP-Referer": "https://santosh-pal.netlify.app/", // optional
+        "X-Title": "Santosh Portfolio AI Bot", // optional
       },
       body: JSON.stringify({
         // model: "claude-3-sonnet-20240229",
