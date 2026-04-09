@@ -1,7 +1,4 @@
 const router = require("express").Router();
-require("dotenv").config();
-const dotenvFlow = require("dotenv-flow");
-dotenvFlow.config();
 const profiledata = require("../db/portfolio_data");
 const { Intro, Project,Education,Expereince,Skill } = require("../models/portFolio");
 const NodeCache = require("node-cache");
@@ -10,53 +7,6 @@ const cacheKey = "myData";
 const upload = require("../utils/multer"); // your production multer
 const cloudinary = require("../utils/cloudinary");
 const streamifier = require("streamifier");
-const fetch = require("node-fetch");
-
-//////////////////Add Ai chatBoat Features///////////////////////
-
-const SYSTEM_PROMPT = `You are an AI assistant embedded in Santosh Pal's developer portfolio website.
-Santosh is a JavaScript Full Stack Developer skilled in React.js, Node.js, Express, MongoDB, and more.
-Answer visitor questions about Santosh's work, skills, and projects in a friendly, concise tone.
-If asked something unrelated, gently steer back to portfolio-related topics.
-Keep responses short and readable — ideally 2-4 sentences unless a detailed list is requested.`;
-
-
-router.post("/ai-chatBoat", async (req, res) => {
-  const { messages } = req.body;
-  console.log("Received messages for AI chatBoat:", messages);
-  console.log("Anthropic API Key:", process.env.ANTHROPIC_API_KEY);
-  if (!messages || !Array.isArray(messages)) {
-    return res.status(400).json({ error: "messages array is required" });
-  }
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/"+ messages, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 600,
-        system: SYSTEM_PROMPT,
-        messages,
-      }),
-    });
-    const data = await response.json();
-    if (data.error) {
-      console.error("Claude API error response 500:", data);
-      return res.status(500).json({ error: data.error.message });
-    }
-    const reply = data?.content?.[0]?.text || "No response.";
-    res.json({ reply });
-  } catch (err) {
-    console.error("catch block API error:", err);
-    res.status(500).json({ error: err });
-  }
-});
-
-
 
 /////////////////////////// get all Portfoliod Data//////////////////
 
@@ -75,7 +25,6 @@ router.get("/get-portfolio",async (req, res) => {
       skills: Skills,
     };
     // cache.set(cacheKey, userProfile);
-    console.log("key.......", process.env.ANTHROPIC_API_KEY);
     res.status(200).send({
       data: userProfile,
       success: true,
@@ -361,13 +310,5 @@ router.post("/delete-education", async (req, res) => {
     res.status(500).send(error);
   }
 });
-
-// router.get("/", (req, res) => {
-//   res.send("My Portfolio get Route is Activated")
-// });
-
-// router.get("/portfolio", (req, res) => {
-//   res.json(profiledata);
-// });
 
 module.exports = router;

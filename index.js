@@ -9,6 +9,7 @@ require("./src/Auth2Fa/Auth_Config/passportConfig.js");
 const cutomerRouter = require("./src/routes/customer_view");
 const studentRouter = require("./src/routes/student");
 const portfolioRouter = require("./src/routes/myportfolio_View");
+const AIRouter = require("./src/routes/AI-Features/ai_View.js");
 const RegisterRouter = require("./src/routes/Register");
 const EmployeeRouter = require("./src/routes/employee_view");
 const aut2FaRouter = require("./src/Auth2Fa/Routes/auth2fa_view");
@@ -73,8 +74,7 @@ app.use(bodyParser.json());
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger-output.json");
 // app.use("/api/2f-auth", aut2FaRouter);
-app.use("/api/v1",RegisterRouter,aut2FaRouter,portfolioRouter,cutomerRouter,EmployeeRouter,studentRouter);
-// app.use("/api/v1", portfolioRouter);
+app.use("/api/v1",RegisterRouter,aut2FaRouter,portfolioRouter,AIRouter,cutomerRouter,EmployeeRouter,studentRouter);
 
 const swagerOptions = {
   // explorer: false,
