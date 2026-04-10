@@ -9,7 +9,6 @@ const genAI = new GoogleGenerativeAI(process.env.CHAT_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 //////////////////Add Ai chatBoat Features///////////////////////
-
 const SYSTEM_PROMPT = `You are an AI assistant embedded in Santosh Pal's developer portfolio website.
 Santosh is a JavaScript Full Stack Developer skilled in React.js, Node.js, Express, MongoDB, and more.
 Answer visitor questions about Santosh's work, skills, and projects in a friendly, concise tone.
@@ -18,15 +17,15 @@ Keep responses short and readable — ideally 2-4 sentences unless a detailed li
 
 router.post("/ai-chatBoat", async (req, res) => {
   const { messages } = req.body;
-  console.log("Received messages for AI chatBoat:", messages);
-  console.log("Anthropic API Key:", process.env.OPENROUTEKEY);
+  // console.log("Anthropic API Key:", process.env.OPENROUTEAIKEY,'meassages',messages);
   if (!messages || !Array.isArray(messages)) {
     return res.status(400).json({ error: "messages array is required" });
   }
   try {
-    const apiBaseUrl = "https://api.anthropic.com/v1/messages";
+    // const apiBaseUrl = "https://api.anthropic.com/v1/messages";
     const OPENROUTERURL = "https://openrouter.ai/api/v1/chat/completions"
-    const apikey ='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';
+    const apikey = process.env.OPENROUTEAIKEY;
+      // console.log("Anthropic API Key:", process.env.OPENROUTEAIKEY,'key',apikey);
     const response = await fetch(OPENROUTERURL,{
       method: "POST",
         headers: {
@@ -51,15 +50,15 @@ router.post("/ai-chatBoat", async (req, res) => {
     });
     const data = await response.json();
     if (!response.ok) {
-    //   console.error("Claude API error response 500:", data);
+      // console.error("Claude API error response 500:", data);
       return res.status(500).json({ error: data?.error?.message || "Api Error" });
     }
     // const reply = data?.content?.[0]?.text || "No response."; //antrophic
     const reply = data?.choices?.[0]?.message?.content || "No response from AI";
-    // console.log("AI chatBoat reply:", reply);
+    console.log("AI chatBoat reply:", reply);
     res.json({ reply });
   } catch (err) {
-    // console.error("catch block API error:", err);
+    console.error("catch block API error:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
