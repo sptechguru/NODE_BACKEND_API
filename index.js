@@ -9,7 +9,7 @@ require("./src/Auth2Fa/Auth_Config/passportConfig.js");
 const cutomerRouter = require("./src/routes/customer_view");
 const studentRouter = require("./src/routes/student");
 const portfolioRouter = require("./src/routes/myportfolio_View");
-const AIRouter = require("./src/routes/AI-Features/ai_View.js");
+const GenAIRouter = require("./src/GenrativeAi-Features/Routes/ai.routes");
 const RegisterRouter = require("./src/routes/Register");
 const EmployeeRouter = require("./src/routes/employee_view");
 const aut2FaRouter = require("./src/Auth2Fa/Routes/auth2fa_view");
@@ -20,7 +20,6 @@ const port = process.env.PORT || 5000;
 const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-
 const csrf = require("csurf");
 app.use("*", cors());
 app.use(helmet());
@@ -62,19 +61,28 @@ app.use(passport.session());
 //   next();
 // });
 
+
 const csrfProtection = csrf();
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(cookieParser());
 app.use(express.json());
-
 app.use(bodyParser.json());
 
 // implemention Swagger Api Documetion
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger-output.json");
+
+
+// app.use("/api/v1/register", RegisterRouter);
+// app.use("/api/v1/auth", aut2FaRouter);
+// app.use("/api/v1/portfolio", portfolioRouter);
+// app.use("/api/v1/ai", GenAIRouter);
+// app.use("/api/v1/customer", cutomerRouter);
+// app.use("/api/v1/employee", EmployeeRouter);
+// app.use("/api/v1/student", studentRouter);
 // app.use("/api/2f-auth", aut2FaRouter);
-app.use("/api/v1",RegisterRouter,aut2FaRouter,portfolioRouter,AIRouter,cutomerRouter,EmployeeRouter,studentRouter);
+
+app.use("/api/v1",RegisterRouter,aut2FaRouter,portfolioRouter,GenAIRouter,cutomerRouter,EmployeeRouter,studentRouter);
 
 const swagerOptions = {
   // explorer: false,
