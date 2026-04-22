@@ -157,6 +157,7 @@ router.post("/login", async (req, res) => {
 // // router.get("/user-profile", checkAuth, authrizeRoles("ADMIN","USER"), async (req, res) => {
 //   try {
 //     const userId =req.user.id;
+//     console.log("User Id", userId);
 
 //     const users = await User.findById({id:userId}, { password: 0});
 //     console.log('user-profile',users,userId)
@@ -230,7 +231,7 @@ router.put("/reset-password/:token", async (req, res) => {
 });
 
 
-router.get("/all-users", checkAuth, authrizeRoles("ADMIN"), async (req, res) => {
+router.get("/all-users", async (req, res) => {
   try {
     const users = await User.find({}, { password: 0, confirm_password: 0 });
     // console.log("All users", users);

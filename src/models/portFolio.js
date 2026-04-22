@@ -1,6 +1,15 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+// ✅ Reusable userId field
+const userIdField = {
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Users",
+    required: false,
+  },
+};
+
 const introSchema = new Schema({
   name: {
     type: String,
@@ -31,23 +40,24 @@ const introSchema = new Schema({
 
   twitter: {
     type: String,
-    required: true,
+    // required: true,
   },
 
   insta: {
     type: String,
-    required: true,
+    // required: true,
   },
 
   facebook: {
     type: String,
-    required: true,
+    // required: true,
   },
   
   profile_url:{
     type:String,
     required: true
-  }
+  },
+  ...userIdField, // ✅ Added
 
 });
 
@@ -59,6 +69,7 @@ const skillSchema = new Schema({
       image: { type: String, required: true },
     },
   ],
+  ...userIdField, // ✅ Added
 });
 
 const experienceSchema = new Schema({
@@ -70,6 +81,7 @@ const experienceSchema = new Schema({
   desc: { type: String },
   skills: { type: [String] },
   doc: { type: String },
+  ...userIdField, // ✅ Added
 });
 
 const educationSchema = new Schema({
@@ -80,6 +92,7 @@ const educationSchema = new Schema({
   grade: { type: String },
   desc: { type: String },
   degree: { type: String },
+  ...userIdField, // ✅ Added
 });
 
 //  Project Schema for
@@ -101,6 +114,7 @@ const memberSchema = new mongoose.Schema({
     type: String,
     // required: true,
   },
+  ...userIdField, // ✅ Added
 });
 
 const projectSchema = new mongoose.Schema({
@@ -140,6 +154,7 @@ const projectSchema = new mongoose.Schema({
     // required: true
   },
   member: [memberSchema], // Array of members
+  ...userIdField, // ✅ Added
 });
 
 //  All models Exports

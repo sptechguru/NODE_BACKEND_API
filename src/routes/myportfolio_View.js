@@ -1,29 +1,41 @@
 const router = require("express").Router();
 const profiledata = require("../db/portfolio_data");
-const { Intro, Project,Education,Expereince,Skill } = require("../models/portFolio");
+const {
+  Intro,
+  Project,
+  Education,
+  Expereince,
+  Skill,
+} = require("../models/portFolio");
+const User = require("../models/registers");
 const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 100, checkperiod: 120 });
 const cacheKey = "myData";
 const upload = require("../utils/multer"); // your production multer
 const cloudinary = require("../utils/cloudinary");
 const streamifier = require("streamifier");
+const mongoose = require("mongoose");
 
 /////////////////////////// get all Portfoliod Data//////////////////
 
-router.get("/get-portfolio",async (req, res) => {
+router.get("/get-portfolio", async (req, res) => {
   try {
-    const Intros = await Intro.find();
-    const Projects = await Project.find();
-    const Educations = await Education.find();
-    const Expereinces = await Expereince.find();
-    const Skills = await Skill.find();
+    const [Intros, Projects, Educations, Experiences, Skills] =
+      await Promise.all([
+        Intro.find(),
+        Project.find(),
+        Education.find(),
+        Expereince.find(),
+        Skill.find(),
+      ]);
     const userProfile = {
       intro: Intros[0],
       projects: Projects,
       education: Educations,
-      experience: Expereinces,
+      experience: Experiences,
       skills: Skills,
     };
+    // console.log("Fetched get all user profile data:", userProfile);
     // cache.set(cacheKey, userProfile);
     res.status(200).send({
       data: userProfile,
@@ -36,6 +48,26 @@ router.get("/get-portfolio",async (req, res) => {
       message: error.message,
       stack: error.stack,
     });
+  }
+});
+
+
+router.post("/add-intro", async (req, res) => {
+  try {
+     const intros = new Intro({
+      ...req.body,
+      userId: req.body.userId  // ✅ Save userId
+    });
+    await Intros.save();
+    res.status(200).send({
+      data: Intros,
+      success: true,
+      message: "Intro added Succefully",
+    });
+    // console.log("Intro added Succefully", Intros);
+  } catch (error) {
+    // console.log("Error adding intro:", error);
+    res.status(500).send(error);
   }
 });
 
@@ -60,7 +92,7 @@ router.post("/update-intro", upload.single("profile_url"), async (req, res) => {
             (error, result) => {
               if (result) resolve(result);
               else reject(error);
-            }
+            },
           );
 
           streamifier.createReadStream(req.file.buffer).pipe(stream);
@@ -74,11 +106,10 @@ router.post("/update-intro", upload.single("profile_url"), async (req, res) => {
     }
 
     // ✅ Update document
-    const intro = await Intro.findByIdAndUpdate(
-      _id,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    const intro = await Intro.findByIdAndUpdate(_id, updateData, {
+      new: true,
+      runValidators: true,
+    });
 
     if (!intro) {
       return res.status(404).json({
@@ -87,13 +118,11 @@ router.post("/update-intro", upload.single("profile_url"), async (req, res) => {
       });
     }
 
-
     res.status(200).json({
       success: true,
       message: "Intro Updated Successfully",
       data: intro,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -103,9 +132,26 @@ router.post("/update-intro", upload.single("profile_url"), async (req, res) => {
 });
 
 
+router.post("/delete-intro", async (req, res) => {
+  try {
+    const bio = await Intro.findOneAndDelete({ _id: req.body._id });
+    res.status(200).send({
+      data: bio,
+      success: true,
+      message: "intro deleated Succefully",
+    });
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+
 router.post("/add-experience", async (req, res) => {
   try {
-    const experience = new Expereince(req.body);
+    const experience = new Expereince({
+      ...req.body,
+      userId: req.body.userId  // ✅ Save userId
+    });
     await experience.save();
     res.status(200).send({
       data: experience,
@@ -124,7 +170,7 @@ router.post("/update-experience", async (req, res) => {
     const experience = await Expereince.findOneAndUpdate(
       { _id: req.body._id },
       req.body,
-      { new: true }
+      { new: true },
     );
     res.status(200).send({
       data: experience,
@@ -155,7 +201,10 @@ router.post("/delete-experience", async (req, res) => {
 
 router.post("/add-project", async (req, res) => {
   try {
-    const project = new Project(req.body);
+    const project = new Project({
+      ...req.body,
+      userId: req.body.userId  // ✅ Save userId
+    });
     await project.save();
     res.status(200).send({
       data: project,
@@ -174,7 +223,7 @@ router.post("/update-project", async (req, res) => {
     const project = await Project.findOneAndUpdate(
       { _id: req.body._id },
       req.body,
-      { new: true }
+      { new: true },
     );
     res.status(200).send({
       data: project,
@@ -205,9 +254,19 @@ router.post("/delete-project", async (req, res) => {
 
 router.post("/add-skills", async (req, res) => {
   try {
+       // ✅ Validate userId
+    if (!req.body.userId) {
+      return res.status(400).send({
+        data: null,
+        success: false,
+        message: "userId is required",
+      });
+    }
+    
     const skill = new Skill({
       title: req.body.title,
       skills: req.body.skills,
+      userId: req.body.userId, 
     });
     const newSkill = await skill.save();
     res.status(200).send({
@@ -228,7 +287,7 @@ router.post("/update-skills", async (req, res) => {
     const updatedSkill = await Skill.findOneAndUpdate(
       { _id: req.body._id },
       req.body,
-      { new: true }
+      { new: true },
     );
     res.status(200).send({
       data: updatedSkill,
@@ -265,7 +324,10 @@ router.post("/delete-skills", async (req, res) => {
 
 router.post("/add-education", async (req, res) => {
   try {
-    const eduCation = new Education(req.body);
+    const eduCation = new Education({
+      ...req.body,
+      userId: req.body.userId  // ✅ Save userId
+    });
     await eduCation.save();
     res.status(200).send({
       data: eduCation,
@@ -284,7 +346,7 @@ router.post("/update-education", async (req, res) => {
     const eduCation = await Education.findOneAndUpdate(
       { _id: req.body._id },
       req.body,
-      { new: true }
+      { new: true },
     );
     res.status(200).send({
       data: eduCation,
@@ -308,6 +370,58 @@ router.post("/delete-education", async (req, res) => {
     });
   } catch (error) {
     res.status(500).send(error);
+  }
+});
+
+
+
+router.get("/get-portfolio/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+    // console.log("Received name parameter:", name); // Debug log to check the received name
+    // Step 1: Find user by first name (case-insensitive)
+    const user = await User.findOne({
+      firstName: { $regex: new RegExp(name, "i") },
+    });
+    // console.log("user found Found user ID:", user);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: `No user found with name: ${name}`,
+      });
+    }
+    const userId = new mongoose.Types.ObjectId(user._id);
+    // const userId = user._id;
+    // console.log("Found user ID:", userId); // Debug log to check the found user ID
+    // // Step 2: Fetch all portfolio data linked to this user
+    const [Intros, Projects, Educations, Experiences, Skills] =
+      await Promise.all([
+        Intro.find({ userId }),
+        Project.find({ userId }),
+        Education.find({ userId }),
+        Expereince.find({ userId }),
+        Skill.find({ userId }),
+      ]);
+    // Step 3: Build same response format as /get-portfolio
+    const userProfile = {
+      intro: Intros[0] || null,
+      projects: Projects,
+      education: Educations,
+      experience: Experiences,
+      skills: Skills,
+    };
+    // console.log("Fetched getby user profile data:", userProfile); // Debug log to check fetched data
+    res.status(200).json({
+      success: true,
+      message: `Portfolio data fetched successfully for: ${name}`,
+      data: userProfile,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Internal Server Error",
+      message: error.message,
+      stack: error.stack,
+    });
   }
 });
 
